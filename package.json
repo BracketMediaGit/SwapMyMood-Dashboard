@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build",
     "build:vercel": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build",
     "vercel-build": "npm run build:vercel",
     "build:stage": "vue-cli-service build --mode staging",
