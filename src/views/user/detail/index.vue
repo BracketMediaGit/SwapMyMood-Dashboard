@@ -102,47 +102,6 @@
         </el-table-column>
       </el-table>
     </el-row>
-
-    <el-row>
-      <h1>WELLNESS SURVEYS</h1>
-      <el-table
-        :key="tableKey"
-        v-loading="listLoading"
-        :data="surveys"
-        border
-        fit
-        highlight-current-row
-        style="width: 100%;"
-        height="20rem"
-      >
-        <el-table-column label="Date" align="center">
-          <template slot-scope="{row}">
-            <span>{{ new Date(row.createdAt) | parseDate }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Time" align="center">
-          <template slot-scope="{row}">
-            <span>{{ new Date(row.createdAt) | parseTime }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Session" align="center">
-          <template slot-scope="{row}">
-            <span>{{ row.session | parseSession }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column v-for="t in survey.template" :key="t.id" :label="t.name" :prop="t.name" align="center">
-          <template slot-scope="{row}">
-            <span>{{ getStatementValue(row.statements, t.name) }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Overall Score" prop="score" align="center">
-          <template slot-scope="{row}">
-            <span>{{ Math.ceil(row.score) }}</span>
-          </template>
-        </el-table-column>
-      </el-table>
-
-    </el-row>
   </div>
 </template>
 
@@ -159,7 +118,6 @@ export default {
   directives: { waves },
   data () {
     return {
-      surveys: [],
       swaps: [],
       emotionCycles: [],
       firstName: '',
@@ -230,8 +188,7 @@ export default {
           this.secret = res.secret
           this.swaps = res.swaps
           this.emotionCycles = res.emotionCycles
-          this.surveys = res.surveys
-          this.$store.dispatch('detail/setData', { swaps: res.swaps, emotionCycles: res.emotionCycles, surveys: res.surveys })
+          this.$store.dispatch('detail/setData', { swaps: res.swaps, emotionCycles: res.emotionCycles })
           this.loading = false
         })
     },
@@ -242,28 +199,23 @@ export default {
       this.$emit('clear', '')
       this.swaps = this.detail.swaps
       this.emotionCycles = this.detail.emotionCycles
-      this.surveys = this.detail.surveys
       this.loading = false
     },
     handleFilter () {
       this.loading = true
       let swaps = []
       let emotionCycles = []
-      let surveys = []
 
       swaps = this.sortChange(this.detail.swaps, this.listQuery.sortBy)
       emotionCycles = this.sortChange(this.detail.emotionCycles, this.listQuery.sortBy)
-      surveys = this.sortChange(this.detail.surveys, this.listQuery.sortBy)
 
       if (this.listQuery.fromDate && this.listQuery.toDate) {
         swaps = this.filterByDate(swaps)
         emotionCycles = this.filterByDate(emotionCycles)
-        surveys = this.filterByDate(surveys)
       }
 
       this.swaps = swaps
       this.emotionCycles = emotionCycles
-      this.surveys = surveys
       this.loading = false
     },
     filterByDate (data) {
@@ -281,25 +233,20 @@ export default {
     handleDownload () {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const questions = this.survey.template.map(q => q.name)
-        const surveyHeader = ['Id', 'First Name', 'Last Name', 'Date', 'Time', 'Session', ...questions, 'Overall Score']
         const swapHeader = ['Id', 'First Name', 'Last Name', 'Date', 'Time', 'Session', 'Problem', 'Alternatives', 'Are you Satisfied?', "Yes, I'm Satisfied", 'Notes', 'Emotion Cycle']
         const emotionCycleHeader = ['Id', 'First Name', 'Last Name', 'Date', 'Time', 'Session', 'Triggers', 'Emotions', 'Head, Face, Throat, Neck Sensations', 'Chest, Heart, Breathing Sensations', 'Abdomen Sensations', 'Arm Sensations', 'Leg Sensations', 'Whole Body Sensations', 'Thoughts', 'Behaviors']
         const filterSwapVal = ['id', 'firstName', 'lastName', 'date', 'time', 'session', 'problem', 'alternatives', 'satisfactionLevel', 'satisfaction', 'notes', 'emotionCycle']
         const filterEcVal = ['id', 'firstName', 'lastName', 'date', 'time', 'session', 'trigger', 'emotion', 'head', 'chest', 'abdomen', 'arm', 'leg', 'wholebody', 'thought', 'behavior']
-        const filterSurveyVal = ['id', 'firstName', 'lastName', 'date', 'time', 'session', ...questions, 'score']
         const swaps = this.formatSwapJson(filterSwapVal)
         const ecs = this.formatEc(filterEcVal)
-        const surveys = this.formatSurveyJson(filterSurveyVal, questions)
         excel.export_multiple_json_to_excel({
-          header: [swapHeader, emotionCycleHeader, surveyHeader],
+          header: [swapHeader, emotionCycleHeader],
           data: [
             swaps,
-            ecs,
-            surveys
+            ecs
           ],
           filename: 'User Detail',
-          wsname: ['SWAPS', 'Emotion Cycles', 'Wellness Surveys']
+          wsname: ['SWAPS', 'Emotion Cycles']
         })
         this.downloadLoading = false
       })
@@ -349,21 +296,6 @@ export default {
     formatEcJson (filterVal) {
       if (filterVal && filterVal.length) return filterVal.map(v => v.name)
       return ''
-    },
-    formatSurveyJson (filterVal, questions) {
-      return this.surveys.map(v => filterVal.map(j => {
-        if (j === 'id') return this.$route.params.id
-        if ((j === 'firstName' || j === 'lastName') && this.secret) return 'Private'
-        if (j === 'firstName') return this.firstName
-        if (j === 'lastName') return this.lastName
-        if (j === 'date') return parseDate(new Date(v.createdAt))
-        if (j === 'time') return parseTime(new Date(v.createdAt))
-        if (j === 'session') return parseSession(v.session)
-        if (questions.includes(j)) {
-          return this.getStatementValue(v.statements, j)
-        }
-        return v[j]
-      }))
     }
   }
 }

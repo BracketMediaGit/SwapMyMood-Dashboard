@@ -40,19 +40,6 @@
         </div>
       </div>
     </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel">
-        <div class="card-panel-icon-wrapper icon-money">
-          <svg-icon icon-class="survey" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Wellness Survey
-          </div>
-          <count-to :start-val="0" :end-val="statistics.surveysCount" :duration="3200" class="card-panel-num" />
-        </div>
-      </div>
-    </el-col>
   </el-row>
 </template>
 

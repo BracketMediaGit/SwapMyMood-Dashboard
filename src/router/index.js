@@ -7,7 +7,6 @@ Vue.use(Router)
 import Layout from '@/layout'
 
 /* Router Modules */
-import wellnessSurveyRouter from './modules/wellnessSurvey'
 import swapRouter from './modules/swap'
 import emotionCycleRouter from './modules/emotionCycle'
 
@@ -113,7 +112,6 @@ export const constantRoutes = [
       }
     ]
   },
-  wellnessSurveyRouter,
   swapRouter,
   emotionCycleRouter,
   {
