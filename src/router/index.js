@@ -95,13 +95,13 @@ export const constantRoutes = [
         path: 'create-user',
         component: () => import('@/views/user/create-user/index'),
         name: 'CreateUsers',
-        meta: { title: 'Create user', icon: 'user', affix: false }
+        meta: { title: 'Create user', icon: 'user', affix: false, roles: ['root'] }
       },
       {
         path: 'reset-password',
         component: () => import('@/views/user/reset-password/index'),
         name: 'ResetPassword',
-        meta: { title: 'Reset Password', icon: 'lock', affix: false }
+        meta: { title: 'Reset Password', icon: 'lock', affix: false, roles: ['root'] }
       },
       {
         path: 'detail/:id',
@@ -120,7 +120,8 @@ export const constantRoutes = [
     name: 'Firebase Analytics',
     meta: {
       title: 'Firebase Analytics',
-      icon: 'analytics'
+      icon: 'analytics',
+      roles: ['root']
     }
   },
   {
