@@ -101,7 +101,10 @@ export default {
     }
   },
   created () {
-
+    // Pre-fill email if coming from invitation
+    if (this.$route.query.email) {
+      this.loginForm.email = this.$route.query.email
+    }
   },
   mounted () {
     if (this.loginForm.username === '') {
@@ -129,8 +132,26 @@ export default {
       this.loading = true
       this.$store.dispatch('user/login', this.loginForm)
         .then(() => {
-          this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-          this.loading = false
+          // todo any user could accept someone else's invitation if they guess the invitationId and send it in the query string of the login request
+          // If coming from invitation, accept it after successful login
+          const invitationId = this.$route.query.invitationId
+          if (invitationId) {
+            const linkedAccountsService = require('@/services/linkedAccounts').default
+            return linkedAccountsService.acceptInvitation(invitationId)
+              .then(() => {
+                this.$message.success('Invitation accepted successfully!')
+                this.$router.push({ path: '/' })
+                this.loading = false
+              })
+              .catch(err => {
+                this.$message.error(err.detail || 'Error accepting invitation')
+                this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+                this.loading = false
+              })
+          } else {
+            this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+            this.loading = false
+          }
         })
         .catch(() => {
           this.loading = false

@@ -8,7 +8,7 @@ import getPageTitle from '@/utils/get-page-title'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
-const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
+const whiteList = ['/login', '/auth-redirect', '/accept-invitation'] // no redirect whitelist
 
 router.beforeEach(async (to, from, next) => {
   // start progress bar
@@ -28,11 +28,11 @@ router.beforeEach(async (to, from, next) => {
     } else {
       const hasRoles = store.getters.roles && store.getters.roles.length > 0
 
-      if (hasRoles && store.getters.roles.includes('root')) {
+      if (hasRoles && (store.getters.roles.includes('root') || store.getters.roles.includes('linkedAccount'))) {
         next()
       } else if (hasRoles && store.getters.roles.includes('user')) {
         await store.dispatch('user/resetToken')
-        Message.error('You must be admin to access')
+        Message.error('You must be admin or linked account to access')
         next(`/login?redirect=${to.path}`)
         NProgress.done()
       } else {
