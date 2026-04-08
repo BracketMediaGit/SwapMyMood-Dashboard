@@ -62,7 +62,7 @@
           <span>{{ row.problem ? row.problem.name : '' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Emotion Cycle" prop="emotionCycle" align="center">
+      <el-table-column label="Emotional Cycle" prop="emotionCycle" align="center">
         <template slot-scope="{row}">
           <el-button v-if="row.emotionCycle" size="mini" type="success" @click="goToEcDetail(row.emotionCycle)">
             YES
@@ -217,7 +217,7 @@ export default {
     handleDownload () {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['Id', 'First Name', 'Last Name', 'Date', 'Time', 'Session', 'Problem', 'Emotion Cycle', 'Alternatives', 'Are you Satisfied?', "Yes, I'm Satisfied", 'Notes']
+        const tHeader = ['Id', 'First Name', 'Last Name', 'Date', 'Time', 'Session', 'Problem', 'Emotional Cycle', 'Alternatives', 'Are you Satisfied?', "Yes, I'm Satisfied", 'Notes']
         const filterVal = ['id', 'firstName', 'lastName', 'date', 'time', 'session', 'problem', 'emotionCycle', 'alternatives', 'satisfactionLevel', 'satisfaction', 'notes']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({

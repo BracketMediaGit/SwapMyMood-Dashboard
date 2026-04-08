@@ -193,8 +193,8 @@ export default {
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: 'List Emotion Cycles',
-          wsname: 'Emotion Cycles'
+          filename: 'List Emotional Cycles',
+          wsname: 'Emotional Cycles'
         })
         this.downloadLoading = false
       })

@@ -47,7 +47,7 @@
           <span>{{ row.swapsCount }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Emotion Cycles" prop="emotionCycle" width="150px" align="center" sortable="custom">
+      <el-table-column label="Emotional Cycles" prop="emotionCycle" width="150px" align="center" sortable="custom">
         <template slot-scope="{row}">
           <span>{{ row.emotionCyclesCount }}</span>
         </template>
@@ -100,8 +100,8 @@ export default {
       sortOptions: [
         { label: 'SWAPS Ascending', key: 'swapsCount asc' },
         { label: 'SWAPS Descending', key: 'swapsCount desc' },
-        { label: 'Emotion Cycles Ascending', key: 'emotionCyclesCount asc' },
-        { label: 'Emotion Cycles Descending', key: 'emotionCyclesCount desc' },
+        { label: 'Emotional Cycles Ascending', key: 'emotionCyclesCount asc' },
+        { label: 'Emotional Cycles Descending', key: 'emotionCyclesCount desc' },
         { label: 'Surveys Ascending', key: 'surveysCount asc' },
         { label: 'Surveys Descending', key: 'surveysCount desc' }
       ],
@@ -203,7 +203,7 @@ export default {
     handleDownload () {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['Id', 'First Name', 'Last Name', 'Swaps', 'Emotion Cycles', 'Wellness Surveys']
+        const tHeader = ['Id', 'First Name', 'Last Name', 'Swaps', 'Emotional Cycles', 'Wellness Surveys']
         const filterVal = ['id', 'firstName', 'lastName', 'swapsCount', 'emotionCyclesCount', 'surveysCount']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({

@@ -34,7 +34,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Emotion Cycles
+            Emotional Cycles
           </div>
           <count-to :start-val="0" :end-val="statistics.emotionCyclesCount" :duration="3200" class="card-panel-num" />
         </div>

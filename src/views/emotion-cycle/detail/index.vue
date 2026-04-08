@@ -99,8 +99,8 @@ export default {
               this.formatJson(this.emotionCycle.behaviors)
             ]
           ],
-          filename: 'Emotion Cycle Detail',
-          wsname: 'Emotion Cycle Detail'
+          filename: 'Emotional Cycle Detail',
+          wsname: 'Emotional Cycle Detail'
         })
         this.downloadLoading = false
       })

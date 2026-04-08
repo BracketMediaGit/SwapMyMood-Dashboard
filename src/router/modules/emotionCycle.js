@@ -5,7 +5,7 @@ const emotionCycleRouter = {
   component: Layout,
   name: 'EmotionCycle',
   meta: {
-    title: 'Emotion Cycles',
+    title: 'Emotional Cycles',
     icon: 'heart'
   },
   children: [
@@ -14,19 +14,19 @@ const emotionCycleRouter = {
       component: () => import('@/views/emotion-cycle/detail/index'),
       name: 'EmotionCycleDetail',
       hidden: true,
-      meta: { title: 'Emotion Cycle Details' }
+      meta: { title: 'Emotional Cycle Details' }
     },
     {
       path: 'list',
       component: () => import('@/views/emotion-cycle/list-emotion-cycle/index'),
       name: 'EmotionCycleList',
-      meta: { title: 'List Emotion Cycles', icon: 'heart', affix: false }
+      meta: { title: 'List Emotional Cycles', icon: 'heart', affix: false }
     },
     {
       path: 'edit-content',
       component: () => import('@/views/emotion-cycle/edit-content/index'),
       name: 'EmotionCycleEditContent',
-      meta: { title: 'Edit Emotion Cycle Content', icon: 'heart', affix: false },
+      meta: { title: 'Edit Emotional Cycle Content', icon: 'heart', affix: false },
       children: [
         {
           path: 'emotion',

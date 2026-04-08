@@ -47,7 +47,7 @@
             <span>{{ row.problem ? row.problem.name : '' }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Emotion Cycle" prop="emotionCycle" align="center">
+        <el-table-column label="Emotional Cycle" prop="emotionCycle" align="center">
           <template slot-scope="{row}">
             <el-button v-if="row.emotionCycle" size="mini" type="success" @click="goToEcDetail(row.emotionCycle.id)">
               YES
@@ -233,7 +233,7 @@ export default {
     handleDownload () {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const swapHeader = ['Id', 'First Name', 'Last Name', 'Date', 'Time', 'Session', 'Problem', 'Alternatives', 'Are you Satisfied?', "Yes, I'm Satisfied", 'Notes', 'Emotion Cycle']
+        const swapHeader = ['Id', 'First Name', 'Last Name', 'Date', 'Time', 'Session', 'Problem', 'Alternatives', 'Are you Satisfied?', "Yes, I'm Satisfied", 'Notes', 'Emotional Cycle']
         const emotionCycleHeader = ['Id', 'First Name', 'Last Name', 'Date', 'Time', 'Session', 'Triggers', 'Emotions', 'Head, Face, Throat, Neck Sensations', 'Chest, Heart, Breathing Sensations', 'Abdomen Sensations', 'Arm Sensations', 'Leg Sensations', 'Whole Body Sensations', 'Thoughts', 'Behaviors']
         const filterSwapVal = ['id', 'firstName', 'lastName', 'date', 'time', 'session', 'problem', 'alternatives', 'satisfactionLevel', 'satisfaction', 'notes', 'emotionCycle']
         const filterEcVal = ['id', 'firstName', 'lastName', 'date', 'time', 'session', 'trigger', 'emotion', 'head', 'chest', 'abdomen', 'arm', 'leg', 'wholebody', 'thought', 'behavior']
@@ -246,7 +246,7 @@ export default {
             ecs
           ],
           filename: 'User Detail',
-          wsname: ['SWAPS', 'Emotion Cycles']
+          wsname: ['SWAPS', 'Emotional Cycles']
         })
         this.downloadLoading = false
       })

@@ -68,7 +68,7 @@ export default {
         },
         xAxis: [{
           type: 'category',
-          data: ['Users', 'SWAPS', 'Emotion Cycles', 'Surveys'],
+          data: ['Users', 'SWAPS', 'Emotional Cycles', 'Surveys'],
           axisTick: {
             alignWithLabel: true
           }
