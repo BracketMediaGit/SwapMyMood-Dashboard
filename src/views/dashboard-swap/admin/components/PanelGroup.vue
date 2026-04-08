@@ -1,46 +1,76 @@
 <template>
-  <el-row :gutter="40" class="panel-group">
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel">
-        <div class="card-panel-icon-wrapper icon-people">
-          <!-- <i class="el-icon-user" class-name="card-panel-icon" /> -->
-          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Users
+  <div>
+    <el-row :gutter="40" class="panel-group">
+      <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+        <div class="card-panel">
+          <div class="card-panel-icon-wrapper icon-people">
+            <!-- <i class="el-icon-user" class-name="card-panel-icon" /> -->
+            <svg-icon icon-class="peoples" class-name="card-panel-icon" />
           </div>
-          <count-to :start-val="0" :end-val="statistics.usersCount" :duration="2600" class="card-panel-num" />
-        </div>
-      </div>
-    </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel">
-        <div class="card-panel-icon-wrapper icon-message">
-          <svg-icon icon-class="stop" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            SWAPS
+          <div class="card-panel-description">
+            <div class="card-panel-text">
+              Users
+            </div>
+            <count-to :start-val="0" :end-val="statistics.usersCount" :duration="2600" class="card-panel-num" />
           </div>
-          <count-to :start-val="0" :end-val="statistics.swapsCount" :duration="3000" class="card-panel-num" />
         </div>
-      </div>
-    </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel">
-        <div class="card-panel-icon-wrapper icon-money">
-          <svg-icon icon-class="heart" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Emotional Cycles
+      </el-col>
+      <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+        <div class="card-panel">
+          <div class="card-panel-icon-wrapper icon-message">
+            <svg-icon icon-class="stop" class-name="card-panel-icon" />
           </div>
-          <count-to :start-val="0" :end-val="statistics.emotionCyclesCount" :duration="3200" class="card-panel-num" />
+          <div class="card-panel-description">
+            <div class="card-panel-text">
+              SWAPS
+            </div>
+            <count-to :start-val="0" :end-val="statistics.swapsCount" :duration="3000" class="card-panel-num" />
+          </div>
         </div>
-      </div>
-    </el-col>
-  </el-row>
+      </el-col>
+      <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+        <div class="card-panel">
+          <div class="card-panel-icon-wrapper icon-money">
+            <svg-icon icon-class="heart" class-name="card-panel-icon" />
+          </div>
+          <div class="card-panel-description">
+            <div class="card-panel-text">
+              Emotional Cycles
+            </div>
+            <count-to :start-val="0" :end-val="statistics.emotionCyclesCount" :duration="3200" class="card-panel-num" />
+          </div>
+        </div>
+      </el-col>
+      <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+        <div class="card-panel">
+          <div class="card-panel-icon-wrapper icon-shoppingCard">
+            <svg-icon icon-class="link" class-name="card-panel-icon" />
+          </div>
+          <div class="card-panel-description">
+            <div class="card-panel-text">
+              Users with Linked Accounts
+            </div>
+            <count-to :start-val="0" :end-val="statistics.usersWithLinkedAccountsCount || 0" :duration="3400" class="card-panel-num" />
+          </div>
+        </div>
+      </el-col>
+    </el-row>
+    <el-row :gutter="40" class="panel-group">
+      <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+        <div class="card-panel">
+          <div class="card-panel-icon-wrapper icon-people">
+            <svg-icon icon-class="peoples" class-name="card-panel-icon" />
+          </div>
+          <div class="card-panel-description">
+            <div class="card-panel-text">
+              Total Linked Accounts
+            </div>
+            <count-to :start-val="0" :end-val="statistics.totalLinkedAccountsCount || 0" :duration="3600" class="card-panel-num" />
+          </div>
+        </div>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script>

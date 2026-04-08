@@ -68,7 +68,7 @@ export default {
         },
         xAxis: [{
           type: 'category',
-          data: ['Users', 'SWAPS', 'Emotional Cycles', 'Surveys'],
+          data: ['Users', 'SWAPS', 'Emotional Cycles', 'Users with Linked Accounts', 'Total Linked Accounts'],
           axisTick: {
             alignWithLabel: true
           }
@@ -98,7 +98,11 @@ export default {
               itemStyle: { color: '#304156' }
             },
             {
-              value: this.statistics.surveysCount,
+              value: this.statistics.usersWithLinkedAccountsCount || 0,
+              itemStyle: { color: '#304156' }
+            },
+            {
+              value: this.statistics.totalLinkedAccountsCount || 0,
               itemStyle: { color: '#304156' }
             }
           ],

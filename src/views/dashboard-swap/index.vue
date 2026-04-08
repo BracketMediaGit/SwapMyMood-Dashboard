@@ -8,6 +8,7 @@
 // import { Loading } from 'element-ui'
 import { mapMutations, mapGetters } from 'vuex'
 import statisticsService from '@/services/statistics'
+import linkedAccountsService from '@/services/linkedAccounts'
 import adminDashboard from './admin'
 
 export default {
@@ -39,9 +40,19 @@ export default {
     getStatistics () {
       this.$loading()
       this.loading = true
-      statisticsService.getStatistics()
-        .then(res => {
-          this['statistics/SET_STATISTICS'](res)
+      Promise.all([
+        statisticsService.getStatistics(),
+        linkedAccountsService.getLinkingMetrics()
+      ])
+        .then(([stats, linkingMetrics]) => {
+          this['statistics/SET_STATISTICS']({
+            ...stats,
+            ...linkingMetrics
+          })
+          this.loading = false
+          this.$loading().close()
+        })
+        .catch(() => {
           this.loading = false
           this.$loading().close()
         })
@@ -53,9 +64,20 @@ export default {
       const fromDate = data[0].getTime()
       let toDate = data[1].getTime()
       if (fromDate === toDate) toDate = data[1].setHours(23, 59, 59)
-      statisticsService.getStatisticsByDate({ fromDate, toDate })
-        .then(res => {
-          this['statistics/SET_STATISTICS'](res)
+      
+      Promise.all([
+        statisticsService.getStatisticsByDate({ fromDate, toDate }),
+        linkedAccountsService.getLinkingMetrics({ fromDate, toDate })
+      ])
+        .then(([stats, linkingMetrics]) => {
+          this['statistics/SET_STATISTICS']({
+            ...stats,
+            ...linkingMetrics
+          })
+          this.loading = false
+          this.$loading().close()
+        })
+        .catch(() => {
           this.loading = false
           this.$loading().close()
         })

@@ -14,8 +14,8 @@ linkedAccountsService.unlinkAccount = (linkedAccountId) => {
     .catch(err => { throw err.data })
 }
 
-linkedAccountsService.getLinkingMetrics = () => {
-  return api.get('/linkedaccounts/metrics')
+linkedAccountsService.getLinkingMetrics = (params = {}) => {
+  return api.get('/linkedaccounts/metrics', { params })
     .then(res => res.data)
     .catch(err => { throw err.data })
 }
