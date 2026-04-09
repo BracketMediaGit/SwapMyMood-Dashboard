@@ -9,7 +9,7 @@ linkedAccountsService.getLinkedAccounts = () => {
 }
 
 linkedAccountsService.unlinkAccount = (linkedAccountId) => {
-  return api.delete(`/linkedaccounts/${linkedAccountId}`)
+  return api.patch(`/linkedaccounts/${linkedAccountId}`)
     .then(res => res.data)
     .catch(err => { throw err.data })
 }
