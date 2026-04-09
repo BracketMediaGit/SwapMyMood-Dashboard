@@ -32,4 +32,16 @@ linkedAccountsService.acceptInvitation = (invitationId) => {
     .catch(err => { throw err.data })
 }
 
+// ============================================================================
+// TESTING ONLY - DELETE WHEN MOBILE APP IS READY
+// ============================================================================
+linkedAccountsService.sendInvitation = (email, inviterId) => {
+  return api.post('/invitations/test-invite', { email, inviterId })
+    .then(res => res.data)
+    .catch(err => { throw err.data })
+}
+// ============================================================================
+// END TESTING CODE
+// ============================================================================
+
 export default linkedAccountsService

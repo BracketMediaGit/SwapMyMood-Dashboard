@@ -143,6 +143,26 @@ export const constantRoutes = [
       }
     ]
   },
+  // ============================================================================
+  // TESTING ONLY - DELETE THIS ROUTE WHEN MOBILE APP IS READY
+  // ============================================================================
+  {
+    path: '/test-invitation',
+    component: Layout,
+    hidden: true,
+    meta: { roles: ['root'] },
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/test-invitation/index'),
+        name: 'TestInvitation',
+        meta: { title: 'Test Invitation', icon: 'bug', roles: ['root'] }
+      }
+    ]
+  },
+  // ============================================================================
+  // END TESTING ROUTE
+  // ============================================================================
   { path: '*', redirect: '/404', hidden: true }
 ]
 
