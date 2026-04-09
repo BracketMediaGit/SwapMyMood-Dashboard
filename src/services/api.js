@@ -36,6 +36,10 @@ const rejectMiddleware = function (err) {
     message = err.data.detail || 'This user does not have permissions to access the requested resource'
   }
 
+  if (err.status === 401) {
+    message = err.data.detail || 'Authentication required'
+  }
+
   if (err.status === 400) {
     message = err.data.detail || 'Some field is required'
   }
