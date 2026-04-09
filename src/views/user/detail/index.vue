@@ -155,7 +155,7 @@ export default {
     }
   },
   created () {
-    if (!this.survey.template.length) this.$store.dispatch('survey/getData')
+    if (!this.isLinkedAccount && !this.survey.template.length) this.$store.dispatch('survey/getData')
     this.getData()
   },
   methods: {
