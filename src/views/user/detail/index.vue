@@ -14,6 +14,9 @@
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         Export
       </el-button>
+      <el-button v-if="isLinkedAccount" class="filter-item" type="danger" icon="el-icon-connection" @click="handleUnlink">
+        Unlink Account
+      </el-button>
     </div>
 
     <el-row>
@@ -68,7 +71,7 @@
     </el-row>
 
     <el-row>
-      <h1>EMOTION CYCLES</h1>
+      <h1>EMOTIONAL CYCLES</h1>
       <el-table
         :key="tableKey"
         v-loading="listLoading"
@@ -144,8 +147,12 @@ export default {
   computed: {
     ...mapGetters([
       'detail',
-      'survey'
-    ])
+      'survey',
+      'roles'
+    ]),
+    isLinkedAccount () {
+      return this.roles.includes('linkedAccount')
+    }
   },
   created () {
     if (!this.survey.template.length) this.$store.dispatch('survey/getData')
@@ -296,6 +303,45 @@ export default {
     formatEcJson (filterVal) {
       if (filterVal && filterVal.length) return filterVal.map(v => v.name)
       return ''
+    },
+    handleUnlink () {
+      this.$confirm('Are you sure you want to unlink this account? This action cannot be undone.', 'Warning', {
+        confirmButtonText: 'Yes, Unlink',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        this.$loading()
+        const linkedAccountsService = require('@/services/linkedAccounts').default
+        const userId = this.$route.params.id
+        userService.getUserDetailsById(userId)
+          .then(user => {
+            if (user.linkedAccountId) {
+              linkedAccountsService.unlinkAccount(user.linkedAccountId)
+                .then(() => {
+                  this.$message({
+                    type: 'success',
+                    message: 'Account unlinked successfully'
+                  })
+                  this.$router.push('/user/index')
+                  this.$loading().close()
+                })
+                .catch(() => {
+                  this.$loading().close()
+                })
+            } else {
+              this.$message({
+                type: 'error',
+                message: 'Could not find linked account information'
+              })
+              this.$loading().close()
+            }
+          })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: 'Unlink cancelled'
+        })
+      })
     }
   }
 }
