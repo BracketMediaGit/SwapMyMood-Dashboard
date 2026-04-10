@@ -69,7 +69,7 @@
         >
           <p>{{ successMessage }}</p>
           <p v-if="!emailSent" style="margin-top: 10px; color: #e6a23c;">
-            <strong>Note:</strong> Email may not have been sent. Use the link below for testing.
+            <strong>Note:</strong> If email have not been sent, use the link below for testing.
           </p>
         </el-alert>
 
