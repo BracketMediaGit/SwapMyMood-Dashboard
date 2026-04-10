@@ -27,7 +27,7 @@ linkedAccountsService.validateInvitation = (token) => {
 }
 
 linkedAccountsService.acceptInvitation = (invitationId) => {
-  return api.post('/invitations/accept', { id: invitationId })
+  return api.post('/invitations/accept', { invitationId: invitationId })
     .then(res => res.data)
     .catch(err => { throw err.data })
 }
