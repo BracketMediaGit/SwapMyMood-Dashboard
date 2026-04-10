@@ -177,7 +177,7 @@ export default {
           .then(() => {
             this.$message.success('Account created and invitation accepted successfully!')
             setTimeout(() => {
-              this.$router.push('/')
+              this.$router.push('/user/index')
             }, 1500)
           })
           .catch(() => {
