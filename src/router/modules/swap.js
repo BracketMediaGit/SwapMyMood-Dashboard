@@ -19,7 +19,7 @@ const swapRouter = {
       path: 'edit-content',
       component: () => import('@/views/swap/edit-content/index'),
       name: 'SwapEditContent',
-      meta: { title: 'Edit SWAPS Content', icon: 'stop', affix: false }
+      meta: { title: 'Edit SWAPS Content', icon: 'stop', affix: false, roles: ['root'] }
     },
     {
       path: 'detail/:id',

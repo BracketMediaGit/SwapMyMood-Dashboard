@@ -26,7 +26,7 @@ const emotionCycleRouter = {
       path: 'edit-content',
       component: () => import('@/views/emotion-cycle/edit-content/index'),
       name: 'EmotionCycleEditContent',
-      meta: { title: 'Edit Emotional Cycle Content', icon: 'heart', affix: false },
+      meta: { title: 'Edit Emotional Cycle Content', icon: 'heart', affix: false, roles: ['root'] },
       children: [
         {
           path: 'emotion',
