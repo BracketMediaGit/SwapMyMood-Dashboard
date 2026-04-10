@@ -77,7 +77,7 @@ export const constantRoutes = [
         path: '/',
         component: () => import('@/views/dashboard-swap/index'),
         name: 'Dashboard',
-        meta: { title: 'Dashboard', icon: 'dashboard', affix: false }
+        meta: { title: 'Dashboard', icon: 'dashboard', affix: false, roles: ['root'] }
       }
     ]
   },

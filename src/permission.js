@@ -29,6 +29,19 @@ router.beforeEach(async (to, from, next) => {
       const hasRoles = store.getters.roles && store.getters.roles.length > 0
 
       if (hasRoles && (store.getters.roles.includes('root') || store.getters.roles.includes('linkedAccount'))) {
+        // Check if route has role restrictions
+        if (to.meta && to.meta.roles) {
+          const userRole = store.getters.roles[0] // Get user's role
+          const hasPermission = to.meta.roles.includes(userRole)
+
+          if (!hasPermission) {
+            // LinkedAccount trying to access root-only route
+            Message.error('You do not have permission to access this page')
+            next({ path: '/user/index' })
+            NProgress.done()
+            return
+          }
+        }
         next()
       } else if (hasRoles && store.getters.roles.includes('user')) {
         await store.dispatch('user/resetToken')

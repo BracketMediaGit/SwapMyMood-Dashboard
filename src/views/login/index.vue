@@ -140,7 +140,7 @@ export default {
             return linkedAccountsService.acceptInvitation(invitationId)
               .then(() => {
                 this.$message.success('Invitation accepted successfully!')
-                this.$router.push({ path: '/' })
+                this.$router.push({ path: '/user/index' })
                 this.loading = false
               })
               .catch(err => {
