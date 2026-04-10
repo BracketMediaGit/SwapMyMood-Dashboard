@@ -5,11 +5,11 @@
         Export
       </el-button>
     </div>
-    <el-row>
+    <el-row v-if="swap.problem">
       <h2>Problem</h2>
       <el-tag>{{ swap.problem.name }}</el-tag>
     </el-row>
-    <el-row v-if="swap.alternatives.length">
+    <el-row v-if="swap.alternatives && swap.alternatives.length">
       <h2>Alternatives</h2>
       <el-tag v-for="alt in swap.alternatives" :key="alt.id">  {{ alt.name }} </el-tag>
     </el-row>
@@ -21,7 +21,7 @@
       <h2>Yes, I'm Satisfied</h2>
       <el-tag v-for="s in satisfaction" :key="s.id"> {{ s.name }} </el-tag>
     </el-row>
-    <el-row v-if="swap.notes.length">
+    <el-row v-if="swap.notes && swap.notes.length">
       <h2>Notes</h2>
       <el-tag v-for="note in swap.notes" :key="note.id"> {{ note.name }} </el-tag>
     </el-row>
@@ -41,15 +41,18 @@ export default {
     return {
       swap: {},
       downloadLoading: false,
-      loading: false
+      loading: true
     }
   },
   computed: {
     satisfaction () {
+      if (!this.swap.satisfactions) return []
       return this.swap.satisfactions.filter(s => s.selected)
     },
     satisfactionLevel () {
-      return this.swap.satisfactionLevels.find(s => s.selected).name
+      if (!this.swap.satisfactionLevels || !this.swap.satisfactionLevels.length) return 'N/A'
+      const selected = this.swap.satisfactionLevels.find(s => s.selected)
+      return selected ? selected.name : 'N/A'
     },
     emotionCycle () {
       if (this.swap.emotionCycle) return 'YES'
@@ -62,7 +65,6 @@ export default {
   },
   methods: {
     getSwapById (id) {
-      this.loading = true
       this.$loading()
       swapService.getSwapById(id)
         .then(res => {

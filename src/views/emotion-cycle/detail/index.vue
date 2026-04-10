@@ -52,7 +52,7 @@ export default {
     return {
       emotionCycle: {},
       downloadLoading: false,
-      loading: false
+      loading: true
     }
   },
   computed: {
@@ -64,7 +64,6 @@ export default {
   },
   methods: {
     getEmotionCycleById (id) {
-      this.loading = true
       this.$loading()
       emotionCycleService.getEmotionCycleById(id)
         .then(res => {
