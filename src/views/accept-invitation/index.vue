@@ -127,9 +127,29 @@ export default {
         .then(result => {
           this.validationResult = result
           this.loading = false
+
+          // If user already exists AND is already logged in, accept invitation directly
+          if (result.recipientUserExists && this.$store.getters.token) {
+            this.acceptInvitationDirectly()
+          }
         })
         .catch(err => {
           this.error = err.detail || 'Invalid or expired invitation link.'
+          this.loading = false
+        })
+    },
+
+    acceptInvitationDirectly () {
+      this.loading = true
+      linkedAccountsService.acceptInvitation(this.validationResult.invitationId)
+        .then(() => {
+          this.$message.success('Invitation accepted successfully!')
+          setTimeout(() => {
+            this.$router.push('/user/index')
+          }, 1500)
+        })
+        .catch(err => {
+          this.$message.error(err.detail || 'Error accepting invitation')
           this.loading = false
         })
     },
@@ -198,7 +218,7 @@ export default {
   background-color: #f0f2f5;
 
   .invitation-card {
-    width: 500px;
+    width: 600px;
     max-width: 90%;
   }
 
@@ -229,6 +249,7 @@ export default {
     p {
       margin-bottom: 15px;
       color: #606266;
+      text-align: center;
     }
 
     .user-exists {
