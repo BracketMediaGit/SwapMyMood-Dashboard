@@ -22,9 +22,32 @@ router.beforeEach(async (to, from, next) => {
 
   if (hasToken) {
     if (to.path === '/login') {
-      // if is logged in, redirect to the home page
-      next({ path: '/' })
-      NProgress.done() // hack: https://github.com/PanJiaChen/vue-element-admin/pull/2939
+      // if is logged in, redirect to the appropriate page based on role
+      const hasRoles = store.getters.roles && store.getters.roles.length > 0
+      console.log(hasRoles)
+      if (hasRoles) {
+        // Redirect based on role
+        if (store.getters.roles.includes('linkedAccount')) {
+          next({ path: '/user/index' })
+        } else {
+          next({ path: '/' })
+        }
+      } else {
+        // Roles not loaded yet, load them first
+        try {
+          await store.dispatch('user/getInfo')
+
+          if (store.getters.roles.includes('linkedAccount')) {
+            next({ path: '/user/index' })
+          } else {
+            next({ path: '/' })
+          }
+        } catch (error) {
+          // If error getting info, just redirect to root
+          next({ path: '/' })
+        }
+      }
+      NProgress.done()
     } else {
       const hasRoles = store.getters.roles && store.getters.roles.length > 0
 
