@@ -5,11 +5,11 @@
         Export
       </el-button>
     </div>
-    <el-row v-if="swap.problem">
+    <el-row>
       <h2>Problem</h2>
       <el-tag>{{ swap.problem.name }}</el-tag>
     </el-row>
-    <el-row v-if="swap.alternatives && swap.alternatives.length">
+    <el-row v-if="swap.alternatives.length">
       <h2>Alternatives</h2>
       <el-tag v-for="alt in swap.alternatives" :key="alt.id">  {{ alt.name }} </el-tag>
     </el-row>
@@ -21,7 +21,7 @@
       <h2>Yes, I'm Satisfied</h2>
       <el-tag v-for="s in satisfaction" :key="s.id"> {{ s.name }} </el-tag>
     </el-row>
-    <el-row v-if="swap.notes && swap.notes.length">
+    <el-row v-if="swap.notes.length">
       <h2>Notes</h2>
       <el-tag v-for="note in swap.notes" :key="note.id"> {{ note.name }} </el-tag>
     </el-row>
@@ -76,23 +76,23 @@ export default {
     handleDownload () {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['Id', 'First Name', 'Last Name', 'Date', 'Time', 'Session', 'Problem', 'Emotional Cycle', 'Alternatives', 'Are you Satisfied?', "Yes, I'm Satisfied", 'Notes']
+        const tHeader = ['Date', 'Time', 'First Name', 'Last Name', 'Session', 'Problem', 'Satisfied?', 'Emotional Cycle', 'Alternatives', 'Are you Satisfied?', "Yes, I'm Satisfied", 'Notes']
         excel.export_json_to_excel({
           header: tHeader,
           data: [
             [
-              this.swap.userId,
-              this.swap.secret ? 'Private' : this.swap.firstName,
-              this.swap.secret ? 'Private' : this.swap.lastName,
               parseDate(new Date(this.swap.createdAt)),
               parseTime(new Date(this.swap.createdAt)),
+              this.swap.secret ? 'Private' : this.swap.firstName,
+              this.swap.secret ? 'Private' : this.swap.lastName,
               parseSession(this.swap.session),
               this.swap.problem.name,
+              this.swap.satisfied === true ? 'Yes' : this.swap.satisfied === false ? 'No' : 'Maybe',
               this.emotionCycle,
-              this.swap.alternatives.map(a => a.name),
+              this.swap.alternatives.map(a => a.name).join(', '),
               this.satisfactionLevel,
-              this.satisfaction.map(s => s.name),
-              this.swap.notes.map(n => n.name)
+              this.satisfaction.map(s => s.name).join(', '),
+              this.swap.notes.map(n => n.name).join(', ')
             ]
           ],
           filename: 'SWAPS Detail',

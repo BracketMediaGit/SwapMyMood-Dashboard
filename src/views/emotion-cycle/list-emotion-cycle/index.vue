@@ -25,39 +25,34 @@
       border
       fit
       highlight-current-row
+      @sort-change="sortChange"
     >
-      <!-- @sort-change="sortChange" -->
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
-        <template slot-scope="{row}">
-          <span>{{ row.userId }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="First Name">
-        <template slot-scope="{row}">
-          <span class="link-type">{{ row.secret ? 'Private' : row.firstName }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Last Name">
-        <template slot-scope="{row}">
-          <span class="link-type">{{ row.secret ? 'Private' : row.lastName }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Date" align="center">
+      <el-table-column label="Date" width="150px" align="center" prop="createdAt" sortable="custom">
         <template slot-scope="{row}">
           <span>{{ new Date(row.createdAt) | parseDate }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Time" align="center">
+      <el-table-column label="Time" width="120px" align="center" prop="createdAt" sortable="custom">
         <template slot-scope="{row}">
           <span>{{ new Date(row.createdAt) | parseTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Session" align="center">
+      <el-table-column label="First Name" min-width="120px">
+        <template slot-scope="{row}">
+          <span class="link-type">{{ row.secret ? 'Private' : row.firstName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Last Name" min-width="120px">
+        <template slot-scope="{row}">
+          <span class="link-type">{{ row.secret ? 'Private' : row.lastName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Session" width="100px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.session | parseSession }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Action" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="Action" align="center" width="150px" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="goToDetails(row.id)">
             VIEW DETAILS
@@ -99,8 +94,8 @@ export default {
         sortBy: 'createdAt desc'
       },
       sortOptions: [
-        { label: 'Date Time Ascending', key: 'createdAt asc' },
-        { label: 'Date Time Descending', key: 'createdAt desc' }
+        { label: 'Date Time Descending', key: 'createdAt desc' },
+        { label: 'Date Time Ascending', key: 'createdAt asc' }
       ],
       downloadLoading: false
     }
@@ -187,8 +182,8 @@ export default {
     handleDownload () {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['Id', 'First Name', 'Last Name', 'Date', 'Time', 'Session', 'Triggers', 'Emotions', 'Head, Face, Throat, Neck Sensations', 'Chest, Heart, Breathing Sensations', 'Abdomen Sensations', 'Arm Sensations', 'Leg Sensations', 'Whole Body Sensations', 'Thoughts', 'Behaviors']
-        const filterVal = ['id', 'firstName', 'lastName', 'date', 'time', 'session', 'trigger', 'emotion', 'head', 'chest', 'abdomen', 'arm', 'leg', 'wholebody', 'thought', 'behavior']
+        const tHeader = ['Date', 'Time', 'First Name', 'Last Name', 'Session', 'Triggers', 'Emotions', 'Head, Face, Throat, Neck Sensations', 'Chest, Heart, Breathing Sensations', 'Abdomen Sensations', 'Arm Sensations', 'Leg Sensations', 'Whole Body Sensations', 'Thoughts', 'Behaviors']
+        const filterVal = ['date', 'time', 'firstName', 'lastName', 'session', 'trigger', 'emotion', 'head', 'chest', 'abdomen', 'arm', 'leg', 'wholebody', 'thought', 'behavior']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
           header: tHeader,
@@ -201,27 +196,33 @@ export default {
     },
     formatJson (filterVal) {
       return this.emotionCycle.emotionCycles.map(v => filterVal.map(j => {
-        if (j === 'id') return v.userId
         if ((j === 'firstName' || j === 'lastName') && v.secret) return 'Private'
         if (j === 'date') return parseDate(new Date(v.createdAt))
         if (j === 'time') return parseTime(new Date(v.createdAt))
         if (j === 'session') return parseSession(v.session)
         if (j === 'trigger') return this.formatEcJson(v.triggers)
         if (j === 'emotion') return this.formatEcJson(v.emotions)
-        if (j === 'head') return this.formatEcJson(v.sensations.head)
-        if (j === 'chest') return this.formatEcJson(v.sensations.chest)
-        if (j === 'abdomen') return this.formatEcJson(v.sensations.abdomen)
-        if (j === 'arm') return this.formatEcJson(v.sensations.arm)
-        if (j === 'leg') return this.formatEcJson(v.sensations.leg)
-        if (j === 'wholebody') return this.formatEcJson(v.sensations.wholebody)
+        if (j === 'head') return this.formatEcJson(v.sensations && v.sensations.head)
+        if (j === 'chest') return this.formatEcJson(v.sensations && v.sensations.chest)
+        if (j === 'abdomen') return this.formatEcJson(v.sensations && v.sensations.abdomen)
+        if (j === 'arm') return this.formatEcJson(v.sensations && v.sensations.arm)
+        if (j === 'leg') return this.formatEcJson(v.sensations && v.sensations.leg)
+        if (j === 'wholebody') return this.formatEcJson(v.sensations && v.sensations.wholebody)
         if (j === 'thought') return this.formatEcJson(v.thoughts)
         if (j === 'behavior') return this.formatEcJson(v.behaviors)
         return v[j]
       }))
     },
     formatEcJson (filterVal) {
-      if (filterVal && filterVal.length) return filterVal.map(v => v.name)
+      if (filterVal && filterVal.length) return filterVal.map(v => v.name).join(', ')
       return ''
+    },
+    sortChange (data) {
+      const { prop, order } = data
+      if (prop === 'createdAt') {
+        this.listQuery.sortBy = `${prop} ${order === 'ascending' ? 'asc' : 'desc'}`
+        this.getEmotionCycles()
+      }
     }
   }
 }

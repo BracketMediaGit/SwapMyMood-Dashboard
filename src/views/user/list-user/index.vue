@@ -27,11 +27,6 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
-        <template slot-scope="{row}">
-          <span>{{ row.id }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="First Name" min-width="150px">
         <template slot-scope="{row}">
           <span class="link-type">{{ row.secret ? 'Private' : row.firstName }}</span>
@@ -40,6 +35,12 @@
       <el-table-column label="Last Name" min-width="150px">
         <template slot-scope="{row}">
           <span class="link-type">{{ row.secret ? 'Private' : row.lastName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Has Linked Account" width="170px" align="center">
+        <template slot-scope="{row}">
+          <el-tag v-if="row.hasLinkedAccount" type="success" size="small">Yes</el-tag>
+          <el-tag v-else type="info" size="small">No</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="SWAP" prop="swap" width="110px" align="center" sortable="custom">
@@ -52,15 +53,13 @@
           <span>{{ row.emotionCyclesCount }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Surveys" align="center" prop="survey" sortable="custom" width="100">
-        <template slot-scope="{row}">
-          <span>{{ row.surveysCount }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="Action" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="goToDetails(row.id)">
             VIEW USER
+          </el-button>
+          <el-button v-if="isLinkedAccount" type="danger" size="mini" @click="handleUnlink(row.id, row.linkedAccountId)">
+            UNLINK
           </el-button>
         </template>
       </el-table-column>
@@ -101,9 +100,7 @@ export default {
         { label: 'SWAPS Ascending', key: 'swapsCount asc' },
         { label: 'SWAPS Descending', key: 'swapsCount desc' },
         { label: 'Emotional Cycles Ascending', key: 'emotionCyclesCount asc' },
-        { label: 'Emotional Cycles Descending', key: 'emotionCyclesCount desc' },
-        { label: 'Surveys Ascending', key: 'surveysCount asc' },
-        { label: 'Surveys Descending', key: 'surveysCount desc' }
+        { label: 'Emotional Cycles Descending', key: 'emotionCyclesCount desc' }
       ],
       downloadLoading: false
     }
@@ -111,14 +108,20 @@ export default {
   computed: {
     ...mapGetters([
       'users',
-      'statistics'
-    ])
+      'statistics',
+      'roles'
+    ]),
+    isLinkedAccount () {
+      return this.roles.includes('linkedAccount')
+    }
   },
   created () {
-    if (!this.statistics.usersCount) {
-      this.getStatistics()
-    } else {
-      this.total = this.statistics.usersCount
+    if (!this.isLinkedAccount) { // only root must see statistics
+      if (!this.statistics.usersCount) {
+        this.getStatistics()
+      } else {
+        this.total = this.statistics.usersCount
+      }
     }
     if (!this.users.length) this.getUsers()
   },
@@ -174,7 +177,6 @@ export default {
       const { prop, order } = data
       if (prop === 'swap') this.sortBySwap(order)
       if (prop === 'emotionCycle') this.sortByEmotionCycle(order)
-      if (prop === 'survey') this.sortBySurvey(order)
     },
     sortBySwap (order) {
       if (order === 'ascending') {
@@ -192,19 +194,11 @@ export default {
       }
       this.handleFilter()
     },
-    sortBySurvey (order) {
-      if (order === 'ascending') {
-        this.listQuery.sortBy = 'surveysCount asc'
-      } else {
-        this.listQuery.sortBy = 'surveysCount desc'
-      }
-      this.handleFilter()
-    },
     handleDownload () {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['Id', 'First Name', 'Last Name', 'Swaps', 'Emotional Cycles', 'Wellness Surveys']
-        const filterVal = ['id', 'firstName', 'lastName', 'swapsCount', 'emotionCyclesCount', 'surveysCount']
+        const tHeader = ['First Name', 'Last Name', 'Has Linked Account', 'Swaps', 'Emotion Cycles']
+        const filterVal = ['firstName', 'lastName', 'hasLinkedAccount', 'swapsCount', 'emotionCyclesCount']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
           header: tHeader,
@@ -219,12 +213,39 @@ export default {
       return this.users.map(v => filterVal.map(j => {
         if (j === 'firstName' && v.secret) return 'Secret'
         if (j === 'lastName' && v.secret) return 'Secret'
+        if (j === 'hasLinkedAccount') return v.hasLinkedAccount ? 'Yes' : 'No'
         return v[j]
       }))
     },
     getSortClass (key) {
-      const sort = this.listQuery.sort
-      return sort === `${key} asc` ? 'asc' : 'desc'
+      return this.listQuery.sort === `+${key}` ? 'ascending' : 'descending'
+    },
+    handleUnlink (userId, linkedAccountId) {
+      this.$confirm('Are you sure you want to unlink this account? This action cannot be undone.', 'Warning', {
+        confirmButtonText: 'Yes, Unlink',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        this.$loading()
+        const linkedAccountsService = require('@/services/linkedAccounts').default
+        linkedAccountsService.unlinkAccount(linkedAccountId)
+          .then(() => {
+            this.$message({
+              type: 'success',
+              message: 'Account unlinked successfully'
+            })
+            this.getUsers()
+            this.$loading().close()
+          })
+          .catch(() => {
+            this.$loading().close()
+          })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: 'Unlink cancelled'
+        })
+      })
     }
   }
 }

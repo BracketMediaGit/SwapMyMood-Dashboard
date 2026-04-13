@@ -75,25 +75,24 @@ export default {
     handleDownload () {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['Id', 'First Name', 'Last Name', 'Date', 'Time', 'Session', 'Triggers', 'Emotions', 'Head, Face, Throat, Neck Sensations', 'Chest, Heart, Breathing Sensations', 'Abdomen Sensations', 'Arm Sensations', 'Leg Sensations', 'Whole Body Sensations', 'Thoughts', 'Behaviors']
+        const tHeader = ['Date', 'Time', 'First Name', 'Last Name', 'Session', 'Triggers', 'Emotions', 'Head, Face, Throat, Neck Sensations', 'Chest, Heart, Breathing Sensations', 'Abdomen Sensations', 'Arm Sensations', 'Leg Sensations', 'Whole Body Sensations', 'Thoughts', 'Behaviors']
         excel.export_json_to_excel({
           header: tHeader,
           data: [
             [
-              this.emotionCycle.userId,
-              this.emotionCycle.secret ? 'Private' : this.emotionCycle.firstName,
-              this.emotionCycle.secret ? 'Private' : this.emotionCycle.lastName,
               parseDate(new Date(this.emotionCycle.createdAt)),
               parseTime(new Date(this.emotionCycle.createdAt)),
+              this.emotionCycle.secret ? 'Private' : this.emotionCycle.firstName,
+              this.emotionCycle.secret ? 'Private' : this.emotionCycle.lastName,
               parseSession(this.emotionCycle.session),
               this.formatJson(this.emotionCycle.triggers),
               this.formatJson(this.emotionCycle.emotions),
-              this.formatJson(this.emotionCycle.sensations.head),
-              this.formatJson(this.emotionCycle.sensations.chest),
-              this.formatJson(this.emotionCycle.sensations.abdomen),
-              this.formatJson(this.emotionCycle.sensations.arm),
-              this.formatJson(this.emotionCycle.sensations.leg),
-              this.formatJson(this.emotionCycle.sensations.wholebody),
+              this.formatJson(this.emotionCycle.sensations && this.emotionCycle.sensations.head),
+              this.formatJson(this.emotionCycle.sensations && this.emotionCycle.sensations.chest),
+              this.formatJson(this.emotionCycle.sensations && this.emotionCycle.sensations.abdomen),
+              this.formatJson(this.emotionCycle.sensations && this.emotionCycle.sensations.arm),
+              this.formatJson(this.emotionCycle.sensations && this.emotionCycle.sensations.leg),
+              this.formatJson(this.emotionCycle.sensations && this.emotionCycle.sensations.wholebody),
               this.formatJson(this.emotionCycle.thoughts),
               this.formatJson(this.emotionCycle.behaviors)
             ]
@@ -105,7 +104,7 @@ export default {
       })
     },
     formatJson (filterVal) {
-      if (filterVal && filterVal.length) return filterVal.map(v => v.name)
+      if (filterVal && filterVal.length) return filterVal.map(v => v.name).join(', ')
       return ''
     }
   }
