@@ -39,7 +39,10 @@
       </el-table-column>
       <el-table-column label="Has Linked Account" width="170px" align="center">
         <template slot-scope="{row}">
-          <el-tag v-if="row.hasLinkedAccount" type="success" size="small">Yes</el-tag>
+          <el-tag v-if="row.hasActiveLinks" type="success" size="small">
+            <svg-icon icon-class="link" style="margin-right: 4px;" />
+            Linked
+          </el-tag>
           <el-tag v-else type="info" size="small">No</el-tag>
         </template>
       </el-table-column>
@@ -198,7 +201,7 @@ export default {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
         const tHeader = ['First Name', 'Last Name', 'Has Linked Account', 'Swaps', 'Emotion Cycles']
-        const filterVal = ['firstName', 'lastName', 'hasLinkedAccount', 'swapsCount', 'emotionCyclesCount']
+        const filterVal = ['firstName', 'lastName', 'hasActiveLinks', 'swapsCount', 'emotionCyclesCount']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
           header: tHeader,
@@ -213,7 +216,7 @@ export default {
       return this.users.map(v => filterVal.map(j => {
         if (j === 'firstName' && v.secret) return 'Secret'
         if (j === 'lastName' && v.secret) return 'Secret'
-        if (j === 'hasLinkedAccount') return v.hasLinkedAccount ? 'Yes' : 'No'
+        if (j === 'hasActiveLinks') return v.hasActiveLinks ? 'Yes' : 'No'
         return v[j]
       }))
     },

@@ -19,6 +19,16 @@
       </el-button>
     </div>
 
+    <el-row style="margin-bottom: 20px; align-items: center;">
+      <h2 style="display: inline-block; margin-right: 15px;">
+        {{ secret ? 'Private User' : `${firstName} ${lastName}` }}
+      </h2>
+      <el-tag v-if="!isLinkedAccount && hasActiveLinks" type="success" size="medium">
+        <svg-icon icon-class="link" style="margin-right: 4px;" />
+        Has Linked Accounts
+      </el-tag>
+    </el-row>
+
     <el-row>
       <h1>SWAPS</h1>
       <el-table
@@ -126,6 +136,7 @@ export default {
       firstName: '',
       lastName: '',
       secret: false,
+      hasActiveLinks: false,
       activeFilter: false,
       activePagination: false,
       tableKey: 0,
@@ -193,6 +204,7 @@ export default {
           this.firstName = res.firstName
           this.lastName = res.lastName
           this.secret = res.secret
+          this.hasActiveLinks = res.hasActiveLinks || false
           this.swaps = res.swaps
           this.emotionCycles = res.emotionCycles
           this.$store.dispatch('detail/setData', { swaps: res.swaps, emotionCycles: res.emotionCycles })
