@@ -37,7 +37,7 @@
           <span class="link-type">{{ row.secret ? 'Private' : row.lastName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Has Linked Account" width="170px" align="center">
+      <el-table-column v-if="!isLinkedAccount" label="Has Linked Account" width="170px" align="center">
         <template slot-scope="{row}">
           <el-tag v-if="row.hasActiveLinks" type="success" size="small">
             <svg-icon icon-class="link" style="margin-right: 4px;" />
