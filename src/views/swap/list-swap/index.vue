@@ -59,8 +59,8 @@
       </el-table-column>
       <el-table-column label="Satisfied?" prop="satisfied" width="110px" align="center" sortable="custom">
         <template slot-scope="{row}">
-          <el-tag v-if="row.satisfied === true" type="success" size="small">Yes</el-tag>
-          <el-tag v-else-if="row.satisfied === false" type="danger" size="small">No</el-tag>
+          <el-tag v-if="getSatisfied(row) === 'Yes'" type="success" size="small">Yes</el-tag>
+          <el-tag v-else-if="getSatisfied(row) === 'No'" type="danger" size="small">No</el-tag>
           <el-tag v-else type="warning" size="small">Maybe</el-tag>
         </template>
       </el-table-column>
@@ -239,8 +239,8 @@ export default {
         if (j === 'session') return parseSession(v.session)
         if (j === 'problem') return v.problem ? v.problem.name : ''
         if (j === 'satisfied') {
-          if (v.satisfied === true) return 'Yes'
-          if (v.satisfied === false) return 'No'
+          if (this.getSatisfied(v) === 'Yes') return 'Yes'
+          if (this.getSatisfied(v) === 'No') return 'No'
           return 'Maybe'
         }
         if (j === 'alternatives') return v.alternatives ? v.alternatives.map(a => a.name).join(', ') : ''
@@ -259,6 +259,18 @@ export default {
         }
         return v[j]
       }))
+    },
+    getSatisfied (row) {
+      if (row.satisfactionLevels && row.satisfactionLevels.length > 0) {
+        const selected = row.satisfactionLevels.find(level => level.selected)
+        if (selected) {
+          const name = selected.name.toLowerCase()
+          if (name.includes('yes') || name.includes('satisfied')) return 'Yes'
+          if (name.includes('no') || name.includes('not')) return 'No'
+          return 'Maybe'
+        }
+      }
+      return 'Maybe'
     }
   }
 }
