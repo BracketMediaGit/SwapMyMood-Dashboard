@@ -207,12 +207,21 @@ export default {
     sortChange (data) {
       const { prop, order } = data
       if (prop === 'createdAt') this.sortByDate(order)
+      if (prop === 'satisfied') this.sortBySatisfied(order)
     },
     sortByDate (order) {
       if (order === 'ascending') {
         this.listQuery.sortBy = 'createdAt asc'
       } else {
         this.listQuery.sortBy = 'createdAt desc'
+      }
+      this.handleFilter()
+    },
+    sortBySatisfied (order) {
+      if (order === 'ascending') {
+        this.listQuery.sortBy = 'satisfactionLevelOrder asc'
+      } else {
+        this.listQuery.sortBy = 'satisfactionLevelOrder desc'
       }
       this.handleFilter()
     },
