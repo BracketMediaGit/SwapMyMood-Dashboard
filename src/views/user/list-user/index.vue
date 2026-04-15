@@ -46,21 +46,26 @@
       </el-table-column>
       <el-table-column v-if="!isLinkedAccount" label="Has Linked Account" width="170px" align="center">
         <template slot-scope="{row}">
-          <el-tag v-if="row.hasActiveLinks" type="success" size="small">
-            <svg-icon icon-class="link" style="margin-right: 4px;" />
-            Linked
-          </el-tag>
-          <el-tag v-else type="info" size="small">No</el-tag>
+          <template v-if="row.role && row.role.name === 'linkedAccount'">
+            <span>N/A</span>
+          </template>
+          <template v-else>
+            <el-tag v-if="row.hasActiveLinks" type="success" size="small">
+              <svg-icon icon-class="link" style="margin-right: 4px;" />
+              Linked
+            </el-tag>
+            <el-tag v-else type="info" size="small">No</el-tag>
+          </template>
         </template>
       </el-table-column>
       <el-table-column label="SWAP" prop="swap" width="110px" align="center" sortable="custom">
         <template slot-scope="{row}">
-          <span>{{ row.swapsCount }}</span>
+          <span>{{ row.role && row.role.name === 'linkedAccount' ? 'N/A' : row.swapsCount }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Emotional Cycles" prop="emotionCycle" width="150px" align="center" sortable="custom">
         <template slot-scope="{row}">
-          <span>{{ row.emotionCyclesCount }}</span>
+          <span>{{ row.role && row.role.name === 'linkedAccount' ? 'N/A' : row.emotionCyclesCount }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Action" align="center" width="230" class-name="small-padding fixed-width">
