@@ -75,7 +75,7 @@ router.beforeEach(async (to, from, next) => {
         try {
           // get user info
           // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
-          store.dispatch('user/getInfo')
+          await store.dispatch('user/getInfo')
 
           // generate accessible routes map based on roles
           store.commit('permission/SET_ROUTES')
