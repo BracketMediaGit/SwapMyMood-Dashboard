@@ -178,10 +178,13 @@ export default {
       this.listQuery.firstName = ''
       this.listQuery.lastName = ''
       this.listQuery.sortBy = 'swapsCount asc'
+      this.listQuery.page = 1
+      this.listQuery.start = 0
       this.getUsers()
     },
     handleFilter () {
       this.listQuery.page = 1
+      this.listQuery.start = 0
       this.getUsers()
     },
     handleModifyStatus (row, status) {

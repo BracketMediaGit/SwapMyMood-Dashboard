@@ -194,6 +194,7 @@ export default {
       this.activeFilter = true
       if (this.listQuery.firstName === '' && this.listQuery.lastName === '' && !this.listQuery.fromDate) this.activeFilter = false
       this.listQuery.page = 1
+      this.listQuery.start = 0
       this.getSwaps()
     },
     clearFilter () {
@@ -204,6 +205,8 @@ export default {
       delete this.listQuery.fromDate
       delete this.listQuery.toDate
       this.$emit('clear', '')
+      this.listQuery.page = 1
+      this.listQuery.start = 0
       this.getSwaps()
     },
     sortChange (data) {

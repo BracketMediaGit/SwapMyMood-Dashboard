@@ -167,6 +167,7 @@ export default {
       this.activeFilter = true
       if (this.listQuery.firstName === '' && this.listQuery.lastName === '' && !this.listQuery.fromDate) this.activeFilter = false
       this.listQuery.page = 1
+      this.listQuery.start = 0
       this.getEmotionCycles()
     },
     clearFilter () {
@@ -177,6 +178,8 @@ export default {
       delete this.listQuery.fromDate
       delete this.listQuery.toDate
       this.$emit('clear', '')
+      this.listQuery.page = 1
+      this.listQuery.start = 0
       this.getEmotionCycles()
     },
     handleDownload () {
@@ -221,6 +224,8 @@ export default {
       const { prop, order } = data
       if (prop === 'createdAt') {
         this.listQuery.sortBy = `${prop} ${order === 'ascending' ? 'asc' : 'desc'}`
+        this.listQuery.page = 1
+        this.listQuery.start = 0
         this.getEmotionCycles()
       }
     }
