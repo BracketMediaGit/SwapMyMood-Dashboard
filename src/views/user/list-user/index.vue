@@ -37,6 +37,13 @@
           <span class="link-type">{{ row.secret ? 'Private' : row.lastName }}</span>
         </template>
       </el-table-column>
+      <el-table-column v-if="isRoot" label="Role" width="140px" align="center">
+        <template slot-scope="{row}">
+          <el-tag v-if="row.role && row.role.name === 'root'" type="danger" size="small">Root</el-tag>
+          <el-tag v-else-if="row.role && row.role.name === 'linkedAccount'" type="warning" size="small">Linked Account</el-tag>
+          <el-tag v-else type="primary" size="small">App User</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column v-if="!isLinkedAccount" label="Has Linked Account" width="170px" align="center">
         <template slot-scope="{row}">
           <el-tag v-if="row.hasActiveLinks" type="success" size="small">
@@ -116,6 +123,9 @@ export default {
     ]),
     isLinkedAccount () {
       return this.roles.includes('linkedAccount')
+    },
+    isRoot () {
+      return this.roles.includes('root')
     }
   },
   created () {
