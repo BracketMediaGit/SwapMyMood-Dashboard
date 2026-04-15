@@ -119,12 +119,21 @@ const actions = {
     return new Promise((resolve, reject) => {
       commit('SET_TOKEN', '')
       commit('SET_ROLES', [])
+      commit('SET_USERS', [])
       removeToken()
       resetRouter()
 
       // reset visited views and cached views
       // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
       dispatch('tagsView/delAllViews', null, { root: true })
+
+      // Clear all user-related data to prevent data leakage between sessions in the same browser, for example the root user logs out,
+      // then a linkedaccount user logs in on the same browser instance and can see the list with all users instead of only their contacts
+      commit('statistics/SET_STATISTICS', {}, { root: true })
+      commit('swap/SET_SWAPS', [], { root: true })
+      commit('emotionCycle/SET_EC', [], { root: true })
+      commit('survey/SET_SURVEYS', [], { root: true })
+      commit('detail/SET_DATA', { swaps: [], emotionCycles: [], surveys: [] }, { root: true })
 
       resolve()
     })
