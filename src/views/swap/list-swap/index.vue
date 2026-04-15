@@ -117,7 +117,9 @@ export default {
       },
       sortOptions: [
         { label: 'Date Time Descending', key: 'createdAt desc' },
-        { label: 'Date Time Ascending', key: 'createdAt asc' }
+        { label: 'Date Time Ascending', key: 'createdAt asc' },
+        { label: 'Satisfaction Level Ascending (Yes -> No)', key: 'satisfactionLevelOrder asc' },
+        { label: 'Satisfaction Level Descending (No -> Yes)', key: 'satisfactionLevelOrder desc' }
       ],
       downloadLoading: false
     }
