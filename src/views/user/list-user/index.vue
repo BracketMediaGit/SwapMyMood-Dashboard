@@ -58,14 +58,30 @@
           </template>
         </template>
       </el-table-column>
-      <el-table-column label="SWAP" prop="swap" width="110px" align="center" sortable="custom">
+      <el-table-column label="SWAP" prop="swap" width="180px" align="center" sortable="custom">
         <template slot-scope="{row}">
-          <span>{{ row.role && row.role.name === 'linkedAccount' ? 'N/A' : row.swapsCount }}</span>
+          <template v-if="row.role && row.role.name === 'linkedAccount'">
+            <span>N/A</span>
+          </template>
+          <template v-else-if="isLinkedAccount">
+            <span>{{ row.swapsCount }} ({{ row.sharedSwapsCount }} shared)</span>
+          </template>
+          <template v-else>
+            <span>{{ row.swapsCount }}</span>
+          </template>
         </template>
       </el-table-column>
-      <el-table-column label="Emotional Cycles" prop="emotionCycle" width="150px" align="center" sortable="custom">
+      <el-table-column label="Emotional Cycles" prop="emotionCycle" width="220px" align="center" sortable="custom">
         <template slot-scope="{row}">
-          <span>{{ row.role && row.role.name === 'linkedAccount' ? 'N/A' : row.emotionCyclesCount }}</span>
+          <template v-if="row.role && row.role.name === 'linkedAccount'">
+            <span>N/A</span>
+          </template>
+          <template v-else-if="isLinkedAccount">
+            <span>{{ row.emotionCyclesCount }} ({{ row.sharedEmotionCyclesCount }} shared)</span>
+          </template>
+          <template v-else>
+            <span>{{ row.emotionCyclesCount }}</span>
+          </template>
         </template>
       </el-table-column>
       <el-table-column label="Action" align="center" width="230" class-name="small-padding fixed-width">
