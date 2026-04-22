@@ -132,7 +132,6 @@ export default {
 
           // If user already exists AND is already logged in, accept invitation directly
           if (result.recipientUserExists && this.$store.getters.token) {
-            console.log('[AcceptInvitation] User exists and has token. Accepting directly with invitationId=', result.invitationId)
             this.acceptInvitationDirectly()
           }
         })
@@ -143,20 +142,16 @@ export default {
     },
 
     acceptInvitationDirectly () {
-      console.log('[AcceptInvitation] acceptInvitationDirectly() called')
       this.loading = true
       const invId = this.validationResult && this.validationResult.invitationId
-      console.log('[AcceptInvitation] Calling API to accept invitation. invitationId=', invId)
       linkedAccountsService.acceptInvitation(invId)
         .then(() => {
-          console.log('[AcceptInvitation] Invitation accepted successfully (direct)')
           this.$message.success('Invitation accepted successfully!')
           setTimeout(() => {
             this.$router.push('/user/index')
           }, 1500)
         })
         .catch(err => {
-          console.error('[AcceptInvitation] Error accepting invitation (direct):', err)
           this.$message.error(err.detail || 'Error accepting invitation')
           this.loading = false
         })
@@ -174,13 +169,10 @@ export default {
     },
 
     handleRegister () {
-      console.log('[AcceptInvitation] handleRegister() clicked')
       this.$refs.registerForm.validate(valid => {
-        console.log('[AcceptInvitation] Form validation result:', valid)
         if (!valid) return
 
         this.registering = true
-        console.log('[AcceptInvitation] Creating user...')
 
         // Register user with linkedAccount role
         const newUser = {
@@ -195,7 +187,6 @@ export default {
         const userService = require('@/services/user').default
         userService.createUser(newUser)
           .then(() => {
-            console.log('[AcceptInvitation] User created. Logging in...')
             // After successful registration, log in
             return this.$store.dispatch('user/login', {
               email: this.validationResult.recipientEmail,
@@ -203,19 +194,16 @@ export default {
             })
           })
           .then(() => {
-            console.log('[AcceptInvitation] Logged in. Accepting invitation... id=', this.validationResult.invitationId)
             // Accept the invitation using invitationId
             return linkedAccountsService.acceptInvitation(this.validationResult.invitationId)
           })
           .then(() => {
-            console.log('[AcceptInvitation] Invitation accepted successfully (register flow)')
             this.$message.success('Account created and invitation accepted successfully!')
             setTimeout(() => {
               this.$router.push('/user/index')
             }, 1500)
           })
           .catch(err => {
-            console.error('[AcceptInvitation] Registration/Acceptance error:', err)
             this.$message.error(err.detail || err.message || 'Error creating account')
           })
           .finally(() => {
