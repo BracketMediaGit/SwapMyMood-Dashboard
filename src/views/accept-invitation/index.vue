@@ -81,7 +81,7 @@
 
             <el-form-item prop="acceptTerms" class="terms-checkbox">
               <el-checkbox v-model="registerData.acceptTerms">
-                I ACCEPT THE <a target="_blank" href=" /terms-and-conditions " class="terms-link">TERMS AND CONDITIONS</a>
+                I ACCEPT THE <a target="_blank" href="/terms-and-conditions" class="terms-link">TERMS AND CONDITIONS</a>
               </el-checkbox>
             </el-form-item>
 
