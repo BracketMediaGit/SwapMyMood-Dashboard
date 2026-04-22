@@ -1,6 +1,10 @@
 <template>
   <div class="accept-invitation-container">
     <div class="invitation-card">
+      <!-- Logo -->
+      <div class="logo-container">
+        <img :src="logo" alt="SwapMyMood Logo" class="logo">
+      </div>
       <div v-if="error" class="error-message">
         <i class="el-icon-warning" />
         <h3>{{ error }}</h3>
@@ -8,9 +12,18 @@
       </div>
 
       <div v-else-if="validationResult && !loading" class="invitation-content">
-        <h2>Invitation to SwapMyMood</h2>
-        <p>You have been invited to view data from a SwapMyMood user.</p>
-
+        <!-- Introductory text -->
+        <p class="invitation-text">
+          You've been invited by
+          <strong v-if="validationResult && validationResult.inviterName">
+            {{ validationResult.inviterName }}
+          </strong>
+          <span v-else>a user</span>
+          to follow his experience using SwapMyMood.
+        </p>
+        <p class="invitation-text">
+          This app helps people solve problems and regulate emotions.
+        </p>
         <div v-if="validationResult.recipientUserExists" class="user-exists">
           <p>An account with email <strong>{{ validationResult.recipientEmail }}</strong> already exists.</p>
           <p>Please log in to accept this invitation.</p>
@@ -18,9 +31,8 @@
         </div>
 
         <div v-else class="register-form">
-          <p>Please create your account to accept this invitation.</p>
-          <p><strong>{{ validationResult.recipientEmail }}</strong></p>
-          <!--todo check if can reuse register form from create user view -->
+          <p class="form-instruction">Please complete this form to stay in contact</p>
+
           <el-form ref="registerForm" :model="registerData" :rules="rules">
             <el-form-item prop="firstname">
               <el-input
@@ -35,6 +47,15 @@
                 v-model="registerData.lastname"
                 placeholder="Last Name"
                 autocomplete="off"
+              />
+            </el-form-item>
+
+            <el-form-item prop="email">
+              <el-input
+                v-model="registerData.email"
+                placeholder="Email"
+                autocomplete="off"
+                disabled
               />
             </el-form-item>
 
@@ -58,8 +79,14 @@
               />
             </el-form-item>
 
-            <el-button type="primary" :loading="registering" style="width: 100%; margin-bottom: 30px;" @click.prevent="handleRegister">
-              Create Account & Accept Invitation
+            <el-form-item prop="acceptTerms" class="terms-checkbox">
+              <el-checkbox v-model="registerData.acceptTerms">
+                I ACCEPT THE <a target="_blank" href=" /terms-and-conditions " class="terms-link">TERMS AND CONDITIONS</a>
+              </el-checkbox>
+            </el-form-item>
+
+            <el-button type="warning" :loading="registering" class="submit-button" @click.prevent="handleRegister">
+              SUBMIT
             </el-button>
           </el-form>
         </div>
@@ -70,6 +97,7 @@
 
 <script>
 import linkedAccountsService from '@/services/linkedAccounts'
+import logo from '@/assets/images/logo_transparent.png'
 
 export default {
   name: 'AcceptInvitation',
@@ -82,7 +110,16 @@ export default {
       }
     }
 
+    const validateTerms = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('You must accept the terms and conditions'))
+      } else {
+        callback()
+      }
+    }
+
     return {
+      logo,
       loading: true,
       registering: false,
       error: null,
@@ -91,8 +128,10 @@ export default {
       registerData: {
         firstname: '',
         lastname: '',
+        email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        acceptTerms: false
       },
       rules: {
         firstname: [
@@ -101,6 +140,9 @@ export default {
         lastname: [
           { required: true, message: 'Last name is required', trigger: 'blur' }
         ],
+        email: [
+          { required: true, message: 'Email is required', trigger: 'blur' }
+        ],
         password: [
           { required: true, message: 'Password is required', trigger: 'blur' },
           { min: 6, message: 'Password must be at least 6 characters', trigger: 'blur' }
@@ -108,6 +150,9 @@ export default {
         confirmPassword: [
           { required: true, message: 'Please confirm your password', trigger: 'blur' },
           { validator: validateConfirmPassword, trigger: 'blur' }
+        ],
+        acceptTerms: [
+          { validator: validateTerms, trigger: 'change' }
         ]
       }
     }
@@ -128,6 +173,7 @@ export default {
       linkedAccountsService.validateInvitation(this.token)
         .then(result => {
           this.validationResult = result
+          this.registerData.email = result.recipientEmail
           this.loading = false
 
           // If user already exists AND is already logged in, accept invitation directly
@@ -257,6 +303,19 @@ $cursor: #fff;
     border-radius: 5px;
     color: #454545;
     margin-bottom: 20px;
+
+    .el-form-item__label {
+      color: #FEC171 !important;
+      font-weight: bold;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .el-checkbox__label {
+    color: $light_gray !important;
+    font-size: 12px;
+    font-weight: bold;
   }
 }
 </style>
@@ -303,19 +362,27 @@ $light_gray:#eee;
   .invitation-content {
     padding: 20px 35px;
 
-    h2 {
-      font-size: 26px;
-      color: $light_gray;
-      margin: 0px auto 20px auto;
-      text-align: center;
-      font-weight: bold;
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
     }
 
-    p {
-      margin-bottom: 15px;
+    .logo {
+      width: 154px;
+      height: auto;
+    }
+
+    .invitation-text {
+      font-size: 18px;
       color: $light_gray;
-      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .form-instruction {
       font-size: 14px;
+      color: $light_gray;
+      margin-bottom: 20px;
     }
 
     .user-exists {
@@ -333,6 +400,33 @@ $light_gray:#eee;
       .el-button {
         margin-top: 10px;
       }
+
+      .form-label .el-form-item__label {
+        color: #FEC171;
+        font-weight: bold;
+        font-size: 12px;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
+      }
+
+      .terms-checkbox {
+        margin-bottom: 20px;
+        border: none !important;
+        background: transparent !important;
+      }
+
+      .terms-link {
+        color: #FEC171;
+        text-decoration: underline;
+        font-weight: bold;
+      }
+
+      .submit-button {
+        width: 100%;
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 10px;
+      }
     }
   }
 
@@ -345,11 +439,11 @@ $light_gray:#eee;
     .invitation-content {
       padding: 15px 20px;
 
-      h2 {
-        font-size: 20px;
+      .invitation-text {
+        font-size: 16px;
       }
 
-      p {
+      .form-instruction {
         font-size: 13px;
       }
     }
