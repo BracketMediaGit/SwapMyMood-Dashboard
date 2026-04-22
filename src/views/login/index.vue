@@ -2,8 +2,8 @@
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
 
-      <div class="title-container">
-        <h3 class="title">SwapMyMood</h3>
+      <div class="logo-container">
+        <img :src="logo" alt="SwapMyMood Logo" class="logo">
       </div>
 
       <el-form-item prop="email">
@@ -53,6 +53,7 @@
 
 <script>
 // import { validUsername } from '@/utils/validate'
+import logo from '@/assets/images/logo_transparent.png'
 
 export default {
   name: 'Login',
@@ -85,7 +86,8 @@ export default {
       loading: false,
       showDialog: false,
       redirect: undefined,
-      otherQuery: {}
+      otherQuery: {},
+      logo
     }
   },
   watch: {
@@ -254,6 +256,17 @@ $light_gray:#eee;
     vertical-align: middle;
     width: 30px;
     display: inline-block;
+  }
+
+  .logo-container {
+    position: relative;
+    margin-bottom: 20px;
+    text-align: center;
+
+    .logo {
+      width: 60%;
+      height: auto;
+    }
   }
 
   .title-container {

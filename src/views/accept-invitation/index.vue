@@ -343,6 +343,17 @@ $light_gray:#eee;
     box-shadow: none;
   }
 
+  .logo-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .logo {
+    width: 60%;
+    height: auto;
+  }
+
   .error-message {
     text-align: center;
     padding: 20px;
@@ -361,17 +372,6 @@ $light_gray:#eee;
 
   .invitation-content {
     padding: 20px 35px;
-
-    .logo-container {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-
-    .logo {
-      width: 154px;
-      height: auto;
-    }
 
     .invitation-text {
       font-size: 18px;
