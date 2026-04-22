@@ -1,6 +1,6 @@
 <template>
   <div class="accept-invitation-container">
-    <el-card v-loading="loading" class="invitation-card">
+    <div class="invitation-card">
       <div v-if="error" class="error-message">
         <i class="el-icon-warning" />
         <h3>{{ error }}</h3>
@@ -19,50 +19,52 @@
 
         <div v-else class="register-form">
           <p>Please create your account to accept this invitation.</p>
-          <p>Email: <strong>{{ validationResult.recipientEmail }}</strong></p>
+          <p><strong>{{ validationResult.recipientEmail }}</strong></p>
           <!--todo check if can reuse register form from create user view -->
-          <el-form ref="registerForm" :model="registerData" :rules="rules" label-position="left" label-width="140px">
-            <el-form-item label="First Name" prop="firstname">
+          <el-form ref="registerForm" :model="registerData" :rules="rules">
+            <el-form-item prop="firstname">
               <el-input
                 v-model="registerData.firstname"
-                placeholder="Enter first name"
+                placeholder="First Name"
+                autocomplete="off"
               />
             </el-form-item>
 
-            <el-form-item label="Last Name" prop="lastname">
+            <el-form-item prop="lastname">
               <el-input
                 v-model="registerData.lastname"
-                placeholder="Enter last name"
+                placeholder="Last Name"
+                autocomplete="off"
               />
             </el-form-item>
 
-            <el-form-item label="Password" prop="password">
+            <el-form-item prop="password">
               <el-input
                 v-model="registerData.password"
                 type="password"
-                placeholder="Enter password"
+                placeholder="Password"
+                autocomplete="off"
                 show-password
               />
             </el-form-item>
 
-            <el-form-item label="Confirm Password" prop="confirmPassword">
+            <el-form-item prop="confirmPassword">
               <el-input
                 v-model="registerData.confirmPassword"
                 type="password"
-                placeholder="Confirm password"
+                placeholder="Confirm Password"
+                autocomplete="off"
                 show-password
               />
             </el-form-item>
 
-            <el-form-item :style="{ width: '100%' }">
-              <el-button type="primary" :loading="registering" class="submit-button" style="width: 100%" @click="handleRegister">
-                Create Account & Accept Invitation
-              </el-button>
-            </el-form-item>
+            <el-button type="primary" :loading="registering" style="width: 100%; margin-bottom: 30px;" @click.prevent="handleRegister">
+              Create Account & Accept Invitation
+            </el-button>
           </el-form>
         </div>
       </div>
-    </el-card>
+    </div>
   </div>
 </template>
 
@@ -130,6 +132,7 @@ export default {
 
           // If user already exists AND is already logged in, accept invitation directly
           if (result.recipientUserExists && this.$store.getters.token) {
+            console.log('[AcceptInvitation] User exists and has token. Accepting directly with invitationId=', result.invitationId)
             this.acceptInvitationDirectly()
           }
         })
@@ -140,15 +143,20 @@ export default {
     },
 
     acceptInvitationDirectly () {
+      console.log('[AcceptInvitation] acceptInvitationDirectly() called')
       this.loading = true
-      linkedAccountsService.acceptInvitation(this.validationResult.invitationId)
+      const invId = this.validationResult && this.validationResult.invitationId
+      console.log('[AcceptInvitation] Calling API to accept invitation. invitationId=', invId)
+      linkedAccountsService.acceptInvitation(invId)
         .then(() => {
+          console.log('[AcceptInvitation] Invitation accepted successfully (direct)')
           this.$message.success('Invitation accepted successfully!')
           setTimeout(() => {
             this.$router.push('/user/index')
           }, 1500)
         })
         .catch(err => {
+          console.error('[AcceptInvitation] Error accepting invitation (direct):', err)
           this.$message.error(err.detail || 'Error accepting invitation')
           this.loading = false
         })
@@ -166,10 +174,13 @@ export default {
     },
 
     handleRegister () {
+      console.log('[AcceptInvitation] handleRegister() clicked')
       this.$refs.registerForm.validate(valid => {
+        console.log('[AcceptInvitation] Form validation result:', valid)
         if (!valid) return
 
         this.registering = true
+        console.log('[AcceptInvitation] Creating user...')
 
         // Register user with linkedAccount role
         const newUser = {
@@ -177,13 +188,14 @@ export default {
           lastname: this.registerData.lastname,
           email: this.validationResult.recipientEmail,
           password: this.registerData.password,
-          role: this.validationResult.recipientRole
+          role: this.validationResult.recipientRole || 'linkedAccount'
         }
 
         // Call user creation endpoint
         const userService = require('@/services/user').default
         userService.createUser(newUser)
           .then(() => {
+            console.log('[AcceptInvitation] User created. Logging in...')
             // After successful registration, log in
             return this.$store.dispatch('user/login', {
               email: this.validationResult.recipientEmail,
@@ -191,16 +203,22 @@ export default {
             })
           })
           .then(() => {
+            console.log('[AcceptInvitation] Logged in. Accepting invitation... id=', this.validationResult.invitationId)
             // Accept the invitation using invitationId
             return linkedAccountsService.acceptInvitation(this.validationResult.invitationId)
           })
           .then(() => {
+            console.log('[AcceptInvitation] Invitation accepted successfully (register flow)')
             this.$message.success('Account created and invitation accepted successfully!')
             setTimeout(() => {
               this.$router.push('/user/index')
             }, 1500)
           })
-          .catch(() => {
+          .catch(err => {
+            console.error('[AcceptInvitation] Registration/Acceptance error:', err)
+            this.$message.error(err.detail || err.message || 'Error creating account')
+          })
+          .finally(() => {
             this.registering = false
           })
       })
@@ -209,17 +227,73 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+/* Match login page input styles */
+$bg:#283443;
+$light_gray:#fff;
+$cursor: #fff;
+
+@supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
+  .accept-invitation-container .el-input input {
+    color: $cursor;
+  }
+}
+
+/* Reset element-ui css to match login */
 .accept-invitation-container {
+  .el-input {
+    display: inline-block;
+    height: 47px;
+    width: 100%;
+
+    input {
+      background: transparent;
+      border: 0px;
+      -webkit-appearance: none;
+      border-radius: 0px;
+      padding: 12px 5px 12px 15px;
+      color: $light_gray;
+      height: 47px;
+      caret-color: $cursor;
+
+      &:-webkit-autofill {
+        box-shadow: 0 0 0px 1000px $bg inset !important;
+        -webkit-text-fill-color: $cursor !important;
+      }
+    }
+  }
+
+  .el-form-item {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    color: #454545;
+    margin-bottom: 20px;
+  }
+}
+</style>
+
+<style lang="scss" scoped>
+$bg:#2d3a4b;
+$dark_gray:#889aa4;
+$light_gray:#eee;
+
+.accept-invitation-container {
+  min-height: 100vh;
+  width: 100%;
+  background-color: $bg;
+  overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  background-color: #f0f2f5;
+  padding: 20px;
 
   .invitation-card {
-    width: 600px;
-    max-width: 90%;
+    width: 520px;
+    max-width: 100%;
+    background: transparent;
+    border: none;
+    box-shadow: none;
   }
 
   .error-message {
@@ -234,22 +308,26 @@ export default {
 
     h3 {
       margin-bottom: 20px;
-      color: #606266;
+      color: $light_gray;
     }
   }
 
   .invitation-content {
-    padding: 20px;
+    padding: 20px 35px;
 
     h2 {
-      margin-bottom: 20px;
+      font-size: 26px;
+      color: $light_gray;
+      margin: 0px auto 20px auto;
       text-align: center;
+      font-weight: bold;
     }
 
     p {
       margin-bottom: 15px;
-      color: #606266;
+      color: $light_gray;
       text-align: center;
+      font-size: 14px;
     }
 
     .user-exists {
@@ -261,48 +339,37 @@ export default {
       margin-top: 30px;
 
       .el-form-item {
-        width: 100%;
+        margin-bottom: 20px;
       }
 
-      ::v-deep .el-form-item:last-child .el-form-item__content {
-        margin-left: 0 !important;
-      }
-
-      .submit-button {
-        width: 100%;
-        padding: 12px 20px;
+      .el-button {
+        margin-top: 10px;
       }
     }
   }
-}
 
-// Mobile responsive styles
-@media (max-width: 768px) {
-  .invitation-card {
-    width: 95%;
-    margin: 10px;
-  }
-
-  .invitation-content {
-    padding: 15px;
-
-    h2 {
-      font-size: 20px;
+  // Mobile responsive styles
+  @media (max-width: 768px) {
+    .invitation-card {
+      width: 95%;
     }
 
-    p {
-      font-size: 14px;
-    }
-  }
+    .invitation-content {
+      padding: 15px 20px;
 
-  .register-form {
-    .el-form-item__label {
-      font-size: 14px;
+      h2 {
+        font-size: 20px;
+      }
+
+      p {
+        font-size: 13px;
+      }
     }
 
-    .submit-button {
-      font-size: 14px;
-      padding: 12px 15px;
+    .register-form {
+      .el-button {
+        font-size: 14px;
+      }
     }
   }
 }

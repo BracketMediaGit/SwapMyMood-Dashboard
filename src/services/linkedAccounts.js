@@ -1,4 +1,5 @@
 import api from './api'
+import { getToken } from '@/utils/auth'
 
 const linkedAccountsService = {}
 
@@ -27,7 +28,9 @@ linkedAccountsService.validateInvitation = (token) => {
 }
 
 linkedAccountsService.acceptInvitation = (invitationId) => {
-  return api.post('/invitations/accept', { invitationId: invitationId })
+  // Explicitly pass Authorization header to avoid timing issues right after login
+  const auth = getToken()
+  return api.post('/invitations/accept', { invitationId: invitationId }, { headers: { Authorization: auth }})
     .then(res => res.data)
     .catch(err => { throw err.data })
 }
