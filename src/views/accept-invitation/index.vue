@@ -54,8 +54,8 @@
               />
             </el-form-item>
 
-            <el-form-item>
-              <el-button type="primary" :loading="registering" @click="handleRegister">
+            <el-form-item :style="{ width: '100%' }">
+              <el-button type="primary" :loading="registering" class="submit-button" style="width: 100%" @click="handleRegister">
                 Create Account & Accept Invitation
               </el-button>
             </el-form-item>
@@ -259,6 +259,50 @@ export default {
 
     .register-form {
       margin-top: 30px;
+
+      .el-form-item {
+        width: 100%;
+      }
+
+      ::v-deep .el-form-item:last-child .el-form-item__content {
+        margin-left: 0 !important;
+      }
+
+      .submit-button {
+        width: 100%;
+        padding: 12px 20px;
+      }
+    }
+  }
+}
+
+// Mobile responsive styles
+@media (max-width: 768px) {
+  .invitation-card {
+    width: 95%;
+    margin: 10px;
+  }
+
+  .invitation-content {
+    padding: 15px;
+
+    h2 {
+      font-size: 20px;
+    }
+
+    p {
+      font-size: 14px;
+    }
+  }
+
+  .register-form {
+    .el-form-item__label {
+      font-size: 14px;
+    }
+
+    .submit-button {
+      font-size: 14px;
+      padding: 12px 15px;
     }
   }
 }
