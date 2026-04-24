@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.firstName" placeholder="First Name" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.lastName" placeholder="Last Name" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.sortBy" style="width: 15%" class="filter-item" @change="handleFilter">
+      <el-input v-model="listQuery.firstName" placeholder="First Name" class="filter-item filter-item--input" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.lastName" placeholder="Last Name" class="filter-item filter-item--input" @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.sortBy" class="filter-item filter-item--select" @change="handleFilter">
         <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
       </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">

@@ -1,10 +1,10 @@
 <template>
   <div v-loading="loading" class="app-container">
     <div class="filter-container">
-      <el-select v-model="listQuery.sortBy" style="width: 15%" class="filter-item">
+      <el-select v-model="listQuery.sortBy" class="filter-item filter-item--select">
         <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
       </el-select>
-      <date-picker class="filter-item" style="width: 20%;" @change="setDatePickerData" />
+      <date-picker class="filter-item filter-item--date" @change="setDatePickerData" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         Search
       </el-button>

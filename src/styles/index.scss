@@ -179,6 +179,32 @@ aside {
     vertical-align: middle;
     margin-bottom: 10px;
   }
+
+  .filter-item--input { width: 200px; }
+  .filter-item--select { width: 200px; }
+  .filter-item--date  { width: 260px; }
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    .filter-item {
+      margin-bottom: 0;
+    }
+
+    .filter-item--input,
+    .filter-item--select,
+    .filter-item--date {
+      flex: 0 0 100%;
+      width: 100% !important;
+    }
+
+    .el-button.filter-item {
+      flex: 1;
+      margin-left: 0 !important;
+    }
+  }
 }
 
 //refine vue-multiselect plugin
