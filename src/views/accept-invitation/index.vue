@@ -344,14 +344,24 @@ $light_gray:#eee;
   }
 
   .logo-container {
-    display: flex;
-    justify-content: center;
+    width: 100%;
+    overflow: hidden;
+    text-align: center;
     margin-bottom: 20px;
   }
 
   .logo {
+    display: block;
     width: 60%;
+    max-width: 100%;
     height: auto;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 768px) {
+    .logo {
+      width: 75%;
+    }
   }
 
   .error-message {
@@ -371,7 +381,7 @@ $light_gray:#eee;
   }
 
   .invitation-content {
-    padding: 20px 35px;
+    padding: 20px 0;
 
     .invitation-text {
       font-size: 18px;
@@ -387,6 +397,11 @@ $light_gray:#eee;
 
     .user-exists {
       margin-top: 30px;
+
+      .el-button {
+        display: block;
+        margin: 0 auto;
+      }
     }
 
     .register-form {
@@ -436,7 +451,7 @@ $light_gray:#eee;
     }
 
     .invitation-content {
-      padding: 15px 20px;
+      padding: 15px 0;
 
       .invitation-text {
         font-size: 16px;
