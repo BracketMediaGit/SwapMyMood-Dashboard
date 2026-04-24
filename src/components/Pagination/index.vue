@@ -108,4 +108,28 @@ export default {
 .pagination-container.hidden {
   display: none;
 }
+
+@media (max-width: 768px) {
+  .pagination-container {
+    padding: 16px 8px;
+  }
+
+  .pagination-container >>> .el-pagination {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .pagination-container >>> .el-pagination__total {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  .pagination-container >>> .el-pagination__sizes,
+  .pagination-container >>> .el-pagination__jump {
+    display: none;
+  }
+}
 </style>
