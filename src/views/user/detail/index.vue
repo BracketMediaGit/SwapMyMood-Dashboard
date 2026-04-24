@@ -70,7 +70,7 @@
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column label="Action" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="Action" align="center" class-name="small-padding fixed-width" min-width="120">
           <template slot-scope="{row}">
             <el-button type="primary" size="mini" @click="goToSwapDetails(row.id)">
               VIEW DETAILS
@@ -106,7 +106,7 @@
             <span>{{ row.session | parseSession }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Action" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="Action" align="center" class-name="small-padding fixed-width" min-width="120">
           <template slot-scope="{row}">
             <el-button type="primary" size="mini" @click="goToEcDetail(row.id)">
               VIEW DETAILS
