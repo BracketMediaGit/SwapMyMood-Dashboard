@@ -25,8 +25,8 @@
           This app helps people solve problems and regulate emotions.
         </p>
         <div v-if="validationResult.recipientUserExists" class="user-exists">
-          <p class="invitation-text">>An account with email <strong>{{ validationResult.recipientEmail }}</strong> already exists.</p>
-          <p class="invitation-text">>Please log in to accept this invitation.</p>
+          <p class="invitation-text">An account with email <strong>{{ validationResult.recipientEmail }}</strong> already exists.</p>
+          <p class="invitation-text">Please log in to accept this invitation.</p>
           <el-button type="primary" @click="goToLogin">Log In</el-button>
         </div>
 
