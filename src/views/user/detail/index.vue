@@ -31,89 +31,93 @@
 
     <el-row>
       <h1>SWAPS</h1>
-      <el-table
-        :key="tableKey"
-        v-loading="listLoading"
-        :data="swaps"
-        border
-        fit
-        highlight-current-row
-        height="15rem"
-      >
-        <el-table-column label="Date" align="center">
-          <template slot-scope="{row}">
-            <span>{{ new Date(row.createdAt) | parseDate }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Time" align="center">
-          <template slot-scope="{row}">
-            <span>{{ new Date(row.createdAt) | parseTime }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Session" align="center">
-          <template slot-scope="{row}">
-            <span>{{ row.session | parseSession }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Problem" prop="problem" align="center">
-          <template slot-scope="{row}">
-            <span>{{ row.problem ? row.problem.name : '' }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Emotional Cycle" prop="emotionCycle" align="center">
-          <template slot-scope="{row}">
-            <el-button v-if="row.emotionCycle" size="mini" type="success" @click="goToEcDetail(row.emotionCycle.id)">
-              YES
-            </el-button>
-            <el-button v-else disabled type="danger" size="mini">
-              NO
-            </el-button>
-          </template>
-        </el-table-column>
-        <el-table-column label="Action" align="center" class-name="small-padding fixed-width" min-width="120">
-          <template slot-scope="{row}">
-            <el-button type="primary" size="mini" @click="goToSwapDetails(row.id)">
-              VIEW DETAILS
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <div class="table-responsive">
+        <el-table
+          :key="tableKey"
+          v-loading="listLoading"
+          :data="swaps"
+          border
+          fit
+          highlight-current-row
+          height="15rem"
+        >
+          <el-table-column label="Date" align="center">
+            <template slot-scope="{row}">
+              <span>{{ new Date(row.createdAt) | parseDate }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="Time" align="center">
+            <template slot-scope="{row}">
+              <span>{{ new Date(row.createdAt) | parseTime }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="Session" align="center">
+            <template slot-scope="{row}">
+              <span>{{ row.session | parseSession }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="Problem" prop="problem" align="center">
+            <template slot-scope="{row}">
+              <span>{{ row.problem ? row.problem.name : '' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="Emotional Cycle" prop="emotionCycle" align="center">
+            <template slot-scope="{row}">
+              <el-button v-if="row.emotionCycle" size="mini" type="success" @click="goToEcDetail(row.emotionCycle.id)">
+                YES
+              </el-button>
+              <el-button v-else disabled type="danger" size="mini">
+                NO
+              </el-button>
+            </template>
+          </el-table-column>
+          <el-table-column label="Action" align="center" class-name="small-padding fixed-width" min-width="120">
+            <template slot-scope="{row}">
+              <el-button type="primary" size="mini" @click="goToSwapDetails(row.id)">
+                VIEW DETAILS
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
     </el-row>
 
     <el-row>
       <h1>EMOTIONAL CYCLES</h1>
-      <el-table
-        :key="tableKey"
-        v-loading="listLoading"
-        :data="emotionCycles"
-        border
-        fit
-        highlight-current-row
-        height="15rem"
-      >
-        <el-table-column label="Date" align="center">
-          <template slot-scope="{row}">
-            <span>{{ new Date(row.createdAt) | parseDate }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Time" align="center">
-          <template slot-scope="{row}">
-            <span>{{ new Date(row.createdAt) | parseTime }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Session" align="center">
-          <template slot-scope="{row}">
-            <span>{{ row.session | parseSession }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Action" align="center" class-name="small-padding fixed-width" min-width="120">
-          <template slot-scope="{row}">
-            <el-button type="primary" size="mini" @click="goToEcDetail(row.id)">
-              VIEW DETAILS
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <div class="table-responsive">
+        <el-table
+          :key="tableKey"
+          v-loading="listLoading"
+          :data="emotionCycles"
+          border
+          fit
+          highlight-current-row
+          height="15rem"
+        >
+          <el-table-column label="Date" align="center">
+            <template slot-scope="{row}">
+              <span>{{ new Date(row.createdAt) | parseDate }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="Time" align="center">
+            <template slot-scope="{row}">
+              <span>{{ new Date(row.createdAt) | parseTime }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="Session" align="center">
+            <template slot-scope="{row}">
+              <span>{{ row.session | parseSession }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="Action" align="center" class-name="small-padding fixed-width" min-width="120">
+            <template slot-scope="{row}">
+              <el-button type="primary" size="mini" @click="goToEcDetail(row.id)">
+                VIEW DETAILS
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
     </el-row>
   </div>
 </template>
@@ -360,5 +364,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 </style>
