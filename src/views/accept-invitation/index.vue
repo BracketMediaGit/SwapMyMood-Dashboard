@@ -386,7 +386,6 @@ $light_gray:#eee;
     }
 
     .user-exists {
-      text-align: center;
       margin-top: 30px;
     }
 
