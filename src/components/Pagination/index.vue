@@ -126,4 +126,13 @@ export default {
     display: none;
   }
 }
+
+@media (max-width: 425px) {
+  .pagination-container >>> .el-pager {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 80%;
+  }
+}
 </style>
