@@ -41,7 +41,7 @@
           highlight-current-row
           height="15rem"
         >
-          <el-table-column label="Date" align="center">
+          <el-table-column label="Date" align="center" min-width="95">
             <template slot-scope="{row}">
               <span>{{ new Date(row.createdAt) | parseDate }}</span>
             </template>
@@ -94,7 +94,7 @@
           highlight-current-row
           height="15rem"
         >
-          <el-table-column label="Date" align="center">
+          <el-table-column label="Date" align="center" min-width="95">
             <template slot-scope="{row}">
               <span>{{ new Date(row.createdAt) | parseDate }}</span>
             </template>
