@@ -112,19 +112,13 @@ export default {
 @media (max-width: 768px) {
   .pagination-container {
     padding: 16px 8px;
-  }
-
-  .pagination-container >>> .el-pagination {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 4px;
+    text-align: center;
   }
 
   .pagination-container >>> .el-pagination__total {
-    width: 100%;
+    display: block;
     text-align: center;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
   }
 
   .pagination-container >>> .el-pagination__sizes,
