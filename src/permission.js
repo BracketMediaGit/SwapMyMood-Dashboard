@@ -58,8 +58,6 @@ router.beforeEach(async (to, from, next) => {
           const hasPermission = to.meta.roles.includes(userRole)
 
           if (!hasPermission) {
-            // LinkedAccount trying to access root-only route
-            Message.error('You do not have permission to access this page')
             next({ path: '/user/index' })
             NProgress.done()
             return
