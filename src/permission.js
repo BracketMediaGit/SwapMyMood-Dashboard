@@ -54,8 +54,8 @@ router.beforeEach(async (to, from, next) => {
       if (hasRoles && (store.getters.roles.includes('root') || store.getters.roles.includes('linkedAccount'))) {
         // Check if route has role restrictions
         if (to.meta && to.meta.roles) {
-          const userRole = store.getters.roles[0] // Get user's role
-          const hasPermission = to.meta.roles.includes(userRole)
+          const userRoles = store.getters.roles
+          const hasPermission = to.meta.roles.some(r => userRoles.includes(r))
 
           if (!hasPermission) {
             next({ path: '/user/index' })

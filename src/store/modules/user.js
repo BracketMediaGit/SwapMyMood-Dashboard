@@ -39,11 +39,20 @@ const actions = {
     return new Promise((resolve, reject) => {
       authService.authenticate(email, password).then(response => {
         const { data } = response
+
+        const jwtPayload = JSON.parse(atob(data.token.split('.')[1]))
+        const roles = jwtPayload.roles ?? (jwtPayload.role ? [jwtPayload.role.name] : [])
+        const hasAccess = roles.includes('root') || roles.includes('linkedAccount')
+
+        if (!hasAccess) {
+          reject({ detail: 'This account does not have access to the dashboard. Please log in from the mobile app.' })
+          return
+        }
+
         commit('SET_TOKEN', data.token)
         setToken(data.token)
         resolve()
       }).catch(error => {
-        // Message.error(error.detail || 'Has Error')
         reject(error)
       })
     })
@@ -72,9 +81,7 @@ const actions = {
         reject('Verification failed, please Login again.')
       }
 
-      const roles = []
-
-      roles.push(user.role.name)
+      const roles = user.roles ?? (user.role ? [user.role.name] : [])
 
       if (!roles || roles.length <= 0) {
         reject('getInfo: roles must be a non-null array!')
