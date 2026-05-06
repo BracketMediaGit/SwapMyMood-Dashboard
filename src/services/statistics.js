@@ -9,7 +9,8 @@ const isRootUser = () => {
   if (!token) return false
   try {
     const user = JSON.parse(atob(token.split('.')[1]))
-    return user.role.name === 'root'
+    const roles = user.roles || (user.role ? [user.role.name] : [])
+    return roles.includes('root')
   } catch (e) {
     return false
   }

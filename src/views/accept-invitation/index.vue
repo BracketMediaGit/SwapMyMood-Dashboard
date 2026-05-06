@@ -11,43 +11,6 @@
         <el-button type="primary" @click="$router.push('/login')">Go to Login</el-button>
       </div>
 
-      <!-- Terms and Conditions Dialog -->
-      <el-dialog
-        title="Terms and Conditions"
-        :visible.sync="showTermsDialog"
-        width="80%"
-        top="5vh"
-        custom-class="terms-dialog"
-      >
-        <div class="terms-dialog-content">
-          <p class="last-updated">Last updated: [TO BE DEFINED]</p>
-          <h3>⚠️ TEMPORARY CONTENT</h3>
-          <p>
-            This is a placeholder for Terms and Conditions. The final legal content must be provided and reviewed before production release.
-          </p>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-          </p>
-          <p>
-            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-          </p>
-          <p>
-            Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra,
-            est eros bibendum elit, nec luctus magna felis sollicitudin mauris.
-          </p>
-          <p>
-            Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus vulputate vehicula.
-            Donec lobortis risus a elit. Etiam tempor. Ut ullamcorper, ligula eu tempor congue.
-          </p>
-          <p>[THIS TEXT IS A PLACEHOLDER – DO NOT USE IN PRODUCTION]</p>
-        </div>
-        <span slot="footer">
-          <el-button type="primary" @click="showTermsDialog = false">Close</el-button>
-        </span>
-      </el-dialog>
-
       <div v-else-if="validationResult && !loading" class="invitation-content">
         <!-- Introductory text -->
         <p class="invitation-text">
@@ -129,6 +92,43 @@
         </div>
       </div>
     </div>
+
+    <!-- Terms and Conditions Dialog -->
+    <el-dialog
+      title="Terms and Conditions"
+      :visible.sync="showTermsDialog"
+      width="80%"
+      top="5vh"
+      custom-class="terms-dialog"
+    >
+      <div class="terms-dialog-content">
+        <p class="last-updated">Last updated: [TO BE DEFINED]</p>
+        <h3>⚠️ TEMPORARY CONTENT</h3>
+        <p>
+          This is a placeholder for Terms and Conditions. The final legal content must be provided and reviewed before production release.
+        </p>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        </p>
+        <p>
+          Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+          Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </p>
+        <p>
+          Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra,
+          est eros bibendum elit, nec luctus magna felis sollicitudin mauris.
+        </p>
+        <p>
+          Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus vulputate vehicula.
+          Donec lobortis risus a elit. Etiam tempor. Ut ullamcorper, ligula eu tempor congue.
+        </p>
+        <p>[THIS TEXT IS A PLACEHOLDER – DO NOT USE IN PRODUCTION]</p>
+      </div>
+      <span slot="footer">
+        <el-button type="primary" @click="showTermsDialog = false">Close</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 

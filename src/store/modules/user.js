@@ -128,6 +128,7 @@ const actions = {
       commit('SET_ROLES', [])
       commit('SET_USERS', [])
       removeToken()
+      authService.clear()
       resetRouter()
 
       // reset visited views and cached views

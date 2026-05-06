@@ -12,7 +12,10 @@ const api = trae.create({ baseUrl: configService.apiUrl })
 // }
 
 const beforeMiddleware = function (config) {
-  config.headers.Authorization = getToken()
+  const token = getToken()
+  if (token) {
+    config.headers.Authorization = token
+  }
   return config
 }
 
