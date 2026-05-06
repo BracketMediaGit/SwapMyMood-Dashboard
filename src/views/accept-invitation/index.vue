@@ -11,6 +11,43 @@
         <el-button type="primary" @click="$router.push('/login')">Go to Login</el-button>
       </div>
 
+      <!-- Terms and Conditions Dialog -->
+      <el-dialog
+        title="Terms and Conditions"
+        :visible.sync="showTermsDialog"
+        width="80%"
+        top="5vh"
+        custom-class="terms-dialog"
+      >
+        <div class="terms-dialog-content">
+          <p class="last-updated">Last updated: [TO BE DEFINED]</p>
+          <h3>⚠️ TEMPORARY CONTENT</h3>
+          <p>
+            This is a placeholder for Terms and Conditions. The final legal content must be provided and reviewed before production release.
+          </p>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          </p>
+          <p>
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </p>
+          <p>
+            Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra,
+            est eros bibendum elit, nec luctus magna felis sollicitudin mauris.
+          </p>
+          <p>
+            Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus vulputate vehicula.
+            Donec lobortis risus a elit. Etiam tempor. Ut ullamcorper, ligula eu tempor congue.
+          </p>
+          <p>[THIS TEXT IS A PLACEHOLDER – DO NOT USE IN PRODUCTION]</p>
+        </div>
+        <span slot="footer">
+          <el-button type="primary" @click="showTermsDialog = false">Close</el-button>
+        </span>
+      </el-dialog>
+
       <div v-else-if="validationResult && !loading" class="invitation-content">
         <!-- Introductory text -->
         <p class="invitation-text">
@@ -81,7 +118,7 @@
 
             <el-form-item prop="acceptTerms" class="terms-checkbox">
               <el-checkbox v-model="registerData.acceptTerms">
-                I ACCEPT THE <a target="_blank" href="/terms-and-conditions" class="terms-link">TERMS AND CONDITIONS</a>
+                I ACCEPT THE <span class="terms-link" @click.prevent="showTermsDialog = true">TERMS AND CONDITIONS</span>
               </el-checkbox>
             </el-form-item>
 
@@ -154,11 +191,26 @@ export default {
         acceptTerms: [
           { validator: validateTerms, trigger: 'change' }
         ]
-      }
+      },
+      showTermsDialog: false
     }
   },
   created () {
     this.token = this.$route.query.token
+
+    if (process.env.NODE_ENV === 'development' && !this.token) {
+      this.validationResult = {
+        recipientEmail: 'dev@test.com',
+        recipientUserExists: false,
+        inviterName: 'Dev User',
+        invitationId: 'dev-mock-id',
+        recipientRole: 'linkedAccount'
+      }
+      this.registerData.email = 'dev@test.com'
+      this.loading = false
+      return
+    }
+
     if (!this.token) {
       this.error = 'Invalid invitation link. No token provided.'
       this.loading = false
@@ -317,6 +369,52 @@ $cursor: #fff;
     color: $light_gray !important;
     font-size: 12px;
     font-weight: bold;
+  }
+}
+
+.terms-dialog {
+  .el-dialog__header {
+    background: #2d3a4b;
+    .el-dialog__title {
+      color: #eee;
+      font-weight: bold;
+    }
+    .el-dialog__headerbtn .el-dialog__close {
+      color: #eee;
+    }
+  }
+
+  .el-dialog__body {
+    background: #2d3a4b;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  .el-dialog__footer {
+    background: #2d3a4b;
+  }
+
+  .terms-dialog-content {
+    color: #eee;
+
+    .last-updated {
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 20px;
+    }
+
+    h3 {
+      color: #FEC171;
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    p {
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+      text-align: justify;
+    }
   }
 }
 </style>
