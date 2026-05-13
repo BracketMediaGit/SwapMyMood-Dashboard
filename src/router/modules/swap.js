@@ -3,6 +3,7 @@ import Layout from '@/layout'
 const swapRouter = {
   path: '/swap',
   component: Layout,
+  redirect: '/swap/list',
   name: 'Swap',
   meta: {
     title: 'SWAPS',

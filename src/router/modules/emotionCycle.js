@@ -3,6 +3,7 @@ import Layout from '@/layout'
 const emotionCycleRouter = {
   path: '/emotioncycle',
   component: Layout,
+  redirect: '/emotioncycle/list',
   name: 'EmotionCycle',
   meta: {
     title: 'Emotional Cycles',

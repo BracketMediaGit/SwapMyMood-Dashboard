@@ -89,6 +89,7 @@ export const constantRoutes = [
   {
     path: '/user',
     component: Layout,
+    redirect: '/user/index',
     name: 'User',
     meta: {
       title: 'Users',
