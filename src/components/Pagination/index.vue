@@ -125,6 +125,10 @@ export default {
   .pagination-container >>> .el-pagination__jump {
     display: none;
   }
+
+  .pagination-container >>> .el-pager li {
+    margin-top: 5px;
+  }
 }
 
 @media (max-width: 425px) {
