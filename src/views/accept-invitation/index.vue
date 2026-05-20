@@ -108,7 +108,7 @@
       custom-class="terms-dialog"
     >
       <div class="terms-dialog-content">
-        <p v-if="termsContent" style="white-space: pre-wrap;">{{ termsContent }}</p>
+        <div v-if="termsContent" v-html="termsContent" />
         <p v-else style="color: rgba(255,255,255,0.5);">No content available yet.</p>
       </div>
       <span slot="footer">
@@ -125,7 +125,7 @@
       custom-class="terms-dialog"
     >
       <div class="terms-dialog-content">
-        <p v-if="privacyContent" style="white-space: pre-wrap;">{{ privacyContent }}</p>
+        <div v-if="privacyContent" v-html="privacyContent" />
         <p v-else style="color: rgba(255,255,255,0.5);">No content available yet.</p>
       </div>
       <span slot="footer">

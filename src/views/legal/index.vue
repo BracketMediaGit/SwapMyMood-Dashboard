@@ -9,13 +9,8 @@
             <span>Terms &amp; Conditions</span>
             <span v-if="terms.updatedAt" class="updated-at">Last updated: {{ terms.updatedAt | formatDate }}</span>
           </div>
-          <el-input
-            v-model="terms.content"
-            type="textarea"
-            :autosize="{ minRows: 10 }"
-            placeholder="Enter Terms & Conditions content..."
-            :disabled="terms.loading"
-          />
+          <tinymce v-if="!terms.loading" v-model="terms.content" :height="400" />
+          <div v-else class="editor-placeholder">Loading...</div>
           <div class="save-row">
             <el-button
               type="primary"
@@ -36,13 +31,8 @@
             <span>Privacy Policy</span>
             <span v-if="privacy.updatedAt" class="updated-at">Last updated: {{ privacy.updatedAt | formatDate }}</span>
           </div>
-          <el-input
-            v-model="privacy.content"
-            type="textarea"
-            :autosize="{ minRows: 10 }"
-            placeholder="Enter Privacy Policy content..."
-            :disabled="privacy.loading"
-          />
+          <tinymce v-if="!privacy.loading" v-model="privacy.content" :height="400" />
+          <div v-else class="editor-placeholder">Loading...</div>
           <div class="save-row">
             <el-button
               type="primary"
@@ -62,10 +52,12 @@
 
 <script>
 import { Message } from 'element-ui'
+import Tinymce from '@/components/Tinymce'
 import legalService from '@/services/legal'
 
 export default {
   name: 'Legal',
+  components: { Tinymce },
   filters: {
     formatDate (ms) {
       if (!ms) return ''
@@ -144,5 +136,15 @@ export default {
 .save-row {
   margin-top: 16px;
   text-align: right;
+}
+.editor-placeholder {
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #909399;
+  font-size: 14px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
 }
 </style>
