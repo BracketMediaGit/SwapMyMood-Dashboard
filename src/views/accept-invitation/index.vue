@@ -85,6 +85,12 @@
               </el-checkbox>
             </el-form-item>
 
+            <el-form-item prop="acceptPrivacy" class="terms-checkbox">
+              <el-checkbox v-model="registerData.acceptPrivacy">
+                I ACCEPT THE <span class="terms-link" @click.prevent="showPrivacyDialog = true">PRIVACY POLICY</span>
+              </el-checkbox>
+            </el-form-item>
+
             <el-button type="warning" :loading="registering" class="submit-button" @click.prevent="handleRegister">
               SUBMIT
             </el-button>
@@ -102,31 +108,28 @@
       custom-class="terms-dialog"
     >
       <div class="terms-dialog-content">
-        <p class="last-updated">Last updated: [TO BE DEFINED]</p>
-        <h3>⚠️ TEMPORARY CONTENT</h3>
-        <p>
-          This is a placeholder for Terms and Conditions. The final legal content must be provided and reviewed before production release.
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-          Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-        </p>
-        <p>
-          Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-          Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-        </p>
-        <p>
-          Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra,
-          est eros bibendum elit, nec luctus magna felis sollicitudin mauris.
-        </p>
-        <p>
-          Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus vulputate vehicula.
-          Donec lobortis risus a elit. Etiam tempor. Ut ullamcorper, ligula eu tempor congue.
-        </p>
-        <p>[THIS TEXT IS A PLACEHOLDER – DO NOT USE IN PRODUCTION]</p>
+        <p v-if="termsContent" style="white-space: pre-wrap;">{{ termsContent }}</p>
+        <p v-else style="color: rgba(255,255,255,0.5);">No content available yet.</p>
       </div>
       <span slot="footer">
         <el-button type="primary" @click="showTermsDialog = false">Close</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- Privacy Policy Dialog -->
+    <el-dialog
+      title="Privacy Policy"
+      :visible.sync="showPrivacyDialog"
+      width="80%"
+      top="5vh"
+      custom-class="terms-dialog"
+    >
+      <div class="terms-dialog-content">
+        <p v-if="privacyContent" style="white-space: pre-wrap;">{{ privacyContent }}</p>
+        <p v-else style="color: rgba(255,255,255,0.5);">No content available yet.</p>
+      </div>
+      <span slot="footer">
+        <el-button type="primary" @click="showPrivacyDialog = false">Close</el-button>
       </span>
     </el-dialog>
   </div>
@@ -134,12 +137,13 @@
 
 <script>
 import linkedAccountsService from '@/services/linkedAccounts'
+import legalService from '@/services/legal'
 import logo from '@/assets/images/logo_transparent.png'
 
 export default {
   name: 'AcceptInvitation',
   data () {
-    const validateConfirmPassword = (rule, value, callback) => {
+    const validateConfirmPassword = (_rule, value, callback) => {
       if (value !== this.registerData.password) {
         callback(new Error('Passwords do not match'))
       } else {
@@ -147,9 +151,17 @@ export default {
       }
     }
 
-    const validateTerms = (rule, value, callback) => {
+    const validateTerms = (_rule, value, callback) => {
       if (!value) {
         callback(new Error('You must accept the terms and conditions'))
+      } else {
+        callback()
+      }
+    }
+
+    const validatePrivacy = (_rule, value, callback) => {
+      if (!value) {
+        callback(new Error('You must accept the privacy policy'))
       } else {
         callback()
       }
@@ -162,13 +174,16 @@ export default {
       error: null,
       token: null,
       validationResult: null,
+      termsContent: '',
+      privacyContent: '',
       registerData: {
         firstname: '',
         lastname: '',
         email: '',
         password: '',
         confirmPassword: '',
-        acceptTerms: false
+        acceptTerms: false,
+        acceptPrivacy: false
       },
       rules: {
         firstname: [
@@ -190,12 +205,17 @@ export default {
         ],
         acceptTerms: [
           { validator: validateTerms, trigger: 'change' }
+        ],
+        acceptPrivacy: [
+          { validator: validatePrivacy, trigger: 'change' }
         ]
       },
-      showTermsDialog: false
+      showTermsDialog: false,
+      showPrivacyDialog: false
     }
   },
   created () {
+    this.loadLegalContent()
     this.token = this.$route.query.token
 
     if (process.env.NODE_ENV === 'development' && !this.token) {
@@ -220,6 +240,11 @@ export default {
     this.validateToken()
   },
   methods: {
+    loadLegalContent () {
+      legalService.getTerms().then(res => { this.termsContent = res.content || '' })
+      legalService.getPrivacy().then(res => { this.privacyContent = res.content || '' })
+    },
+
     validateToken () {
       this.loading = true
       linkedAccountsService.validateInvitation(this.token)

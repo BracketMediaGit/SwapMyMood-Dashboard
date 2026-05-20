@@ -9,6 +9,7 @@ import Layout from '@/layout'
 /* Router Modules */
 import swapRouter from './modules/swap'
 import emotionCycleRouter from './modules/emotionCycle'
+import legalRouter from './modules/legal'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -125,6 +126,7 @@ export const constantRoutes = [
   },
   swapRouter,
   emotionCycleRouter,
+  legalRouter,
   {
     path: 'https://console.firebase.google.com/',
     component: Layout,
