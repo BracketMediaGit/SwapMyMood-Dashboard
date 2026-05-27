@@ -26,4 +26,10 @@ userService.resetPassword = (email) => {
     .catch(err => { throw err.data })
 }
 
+userService.deleteUser = (id) => {
+  return api.delete(`/users/${id}`, { data: { confirm: true } })
+    .then(res => res.data)
+    .catch(err => { throw err.data })
+}
+
 export default userService

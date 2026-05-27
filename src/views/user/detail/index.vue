@@ -17,6 +17,9 @@
       <el-button v-if="isLinkedAccount" class="filter-item" type="danger" icon="el-icon-connection" @click="handleUnlink">
         Unlink Account
       </el-button>
+      <el-button v-if="isRoot" class="filter-item" type="danger" icon="el-icon-delete" @click="handleDeleteAccount">
+        Delete Account
+      </el-button>
     </div>
 
     <el-row style="margin-bottom: 20px; align-items: center;">
@@ -167,6 +170,9 @@ export default {
     ]),
     isLinkedAccount () {
       return this.roles.includes('linkedAccount')
+    },
+    isRoot () {
+      return this.roles.includes('root')
     }
   },
   created () {
@@ -320,6 +326,28 @@ export default {
       if (filterVal && filterVal.length) return filterVal.map(v => v.name)
       return ''
     },
+    handleDeleteAccount () {
+      const name = this.secret ? 'this user' : `${this.firstName} ${this.lastName}`
+      this.$confirm(
+        `This action is irreversible. All data for ${name} will be permanently deleted, including their Firebase Auth account and all Firestore documents. Continue?`,
+        'Delete Account',
+        {
+          confirmButtonText: 'Yes, Delete Permanently',
+          cancelButtonText: 'Cancel',
+          type: 'error'
+        }
+      ).then(() => {
+        const id = this.$route.params.id
+        return userService.deleteUser(id)
+      }).then(() => {
+        this.$message.success('Account permanently deleted')
+        this.$router.push('/user/index')
+      }).catch(err => {
+        if (err === 'cancel') return
+        this.$message.error((err && err.detail) || 'Error deleting account')
+      })
+    },
+
     handleUnlink () {
       this.$confirm('Are you sure you want to unlink this account? This action cannot be undone.', 'Warning', {
         confirmButtonText: 'Yes, Unlink',
