@@ -1,4 +1,6 @@
 import api from './api'
+import { getToken } from '@/utils/auth'
+import configService from './config'
 
 const userService = {}
 
@@ -27,9 +29,19 @@ userService.resetPassword = (email) => {
 }
 
 userService.deleteUser = (id) => {
-  return api.delete(`/users/${id}`, { data: { confirm: true } })
-    .then(res => res.data)
-    .catch(err => { throw err.data })
+  const base = configService.apiUrl.replace(/\/$/, '')
+  const token = getToken()
+  return fetch(`${base}/users/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: token } : {})
+    },
+    body: JSON.stringify({ confirm: true })
+  }).then(res => {
+    if (!res.ok) return res.json().then(e => Promise.reject(e))
+    return res.json()
+  })
 }
 
 export default userService
