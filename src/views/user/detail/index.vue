@@ -30,6 +30,9 @@
         <svg-icon icon-class="link" style="margin-right: 4px;" />
         Has Linked Accounts
       </el-tag>
+      <div v-if="!secret && email" style="margin-top: 6px; font-size: 14px; color: #888;">
+        {{ email }}
+      </div>
     </el-row>
 
     <el-row>
@@ -142,6 +145,7 @@ export default {
       emotionCycles: [],
       firstName: '',
       lastName: '',
+      email: '',
       secret: false,
       hasActiveLinks: false,
       activeFilter: false,
@@ -213,6 +217,7 @@ export default {
           console.log(res)
           this.firstName = res.firstName
           this.lastName = res.lastName
+          this.email = res.email || ''
           this.secret = res.secret
           this.hasActiveLinks = res.hasActiveLinks || false
           this.swaps = res.swaps

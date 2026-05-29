@@ -37,6 +37,11 @@
           <span class="link-type">{{ row.secret ? 'Private' : row.lastName }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="Email" min-width="200px">
+        <template slot-scope="{row}">
+          <span>{{ row.secret ? '—' : row.email }}</span>
+        </template>
+      </el-table-column>
       <el-table-column v-if="isRoot" label="Role" width="140px" align="center">
         <template slot-scope="{row}">
           <el-tag v-if="row.role && row.role.name === 'root'" type="danger" size="small">Root</el-tag>
@@ -234,8 +239,8 @@ export default {
     handleDownload () {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['First Name', 'Last Name', 'Has Linked Account', 'Swaps', 'Emotion Cycles']
-        const filterVal = ['firstName', 'lastName', 'hasActiveLinks', 'swapsCount', 'emotionCyclesCount']
+        const tHeader = ['First Name', 'Last Name', 'Email', 'Has Linked Account', 'Swaps', 'Emotion Cycles']
+        const filterVal = ['firstName', 'lastName', 'email', 'hasActiveLinks', 'swapsCount', 'emotionCyclesCount']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
           header: tHeader,
@@ -250,6 +255,7 @@ export default {
       return this.users.map(v => filterVal.map(j => {
         if (j === 'firstName' && v.secret) return 'Secret'
         if (j === 'lastName' && v.secret) return 'Secret'
+        if (j === 'email' && v.secret) return '—'
         if (j === 'hasActiveLinks') return v.hasActiveLinks ? 'Yes' : 'No'
         return v[j]
       }))
