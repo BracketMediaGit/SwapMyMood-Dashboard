@@ -30,8 +30,8 @@
         <svg-icon icon-class="link" style="margin-right: 4px;" />
         Has Linked Accounts
       </el-tag>
-      <div v-if="!secret && email" style="margin-top: 6px; font-size: 14px; color: #888;">
-        {{ email }}
+      <div v-if="displayEmail" style="margin-top: 6px; font-size: 14px; color: #888;">
+        {{ displayEmail }}
       </div>
     </el-row>
 
@@ -170,13 +170,21 @@ export default {
     ...mapGetters([
       'detail',
       'survey',
-      'roles'
+      'roles',
+      'users'
     ]),
     isLinkedAccount () {
       return this.roles.includes('linkedAccount')
     },
     isRoot () {
       return this.roles.includes('root')
+    },
+    displayEmail () {
+      if (this.secret) return ''
+      if (this.email) return this.email
+      const id = this.$route.params.id
+      const found = this.users.find(u => u.id === id)
+      return found ? found.email || '' : ''
     }
   },
   created () {
