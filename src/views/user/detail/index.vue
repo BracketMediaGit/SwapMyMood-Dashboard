@@ -274,27 +274,29 @@ export default {
     },
     handleDownload () {
       this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
+      const id = this.$route.params.id
+      Promise.all([
+        import('@/vendor/Export2Excel'),
+        userService.getUserDetailsById(id)
+      ]).then(([excel, freshData]) => {
         const swapHeader = ['Id', 'First Name', 'Last Name', 'Date', 'Time', 'Session', 'Problem', 'Alternatives', 'Are you Satisfied?', "Yes, I'm Satisfied", 'Notes', 'Emotional Cycle']
         const emotionCycleHeader = ['Id', 'First Name', 'Last Name', 'Date', 'Time', 'Session', 'Triggers', 'Emotions', 'Head, Face, Throat, Neck Sensations', 'Chest, Heart, Breathing Sensations', 'Abdomen Sensations', 'Arm Sensations', 'Leg Sensations', 'Whole Body Sensations', 'Thoughts', 'Behaviors']
         const filterSwapVal = ['id', 'firstName', 'lastName', 'date', 'time', 'session', 'problem', 'alternatives', 'satisfactionLevel', 'satisfaction', 'notes', 'emotionCycle']
         const filterEcVal = ['id', 'firstName', 'lastName', 'date', 'time', 'session', 'trigger', 'emotion', 'head', 'chest', 'abdomen', 'arm', 'leg', 'wholebody', 'thought', 'behavior']
-        const swaps = this.formatSwapJson(filterSwapVal)
-        const ecs = this.formatEc(filterEcVal)
+        const swaps = this.formatSwapJson(filterSwapVal, freshData.swaps)
+        const ecs = this.formatEc(filterEcVal, freshData.emotionCycles)
         excel.export_multiple_json_to_excel({
           header: [swapHeader, emotionCycleHeader],
-          data: [
-            swaps,
-            ecs
-          ],
+          data: [swaps, ecs],
           filename: 'User Detail',
           wsname: ['SWAPS', 'Emotional Cycles']
         })
+      }).finally(() => {
         this.downloadLoading = false
       })
     },
-    formatSwapJson (filterVal) {
-      return this.swaps.map(v => filterVal.map(j => {
+    formatSwapJson (filterVal, swaps) {
+      return (swaps || this.swaps).map(v => filterVal.map(j => {
         if (j === 'id') return this.$route.params.id
         if ((j === 'firstName' || j === 'lastName') && this.secret) return 'Private'
         if (j === 'firstName') return this.firstName
@@ -314,8 +316,8 @@ export default {
         return v[j]
       }))
     },
-    formatEc (filterVal) {
-      return this.emotionCycles.map(v => filterVal.map(j => {
+    formatEc (filterVal, emotionCycles) {
+      return (emotionCycles || this.emotionCycles).map(v => filterVal.map(j => {
         if (j === 'id') return this.$route.params.id
         if ((j === 'firstName' || j === 'lastName') && this.secret) return 'Private'
         if (j === 'firstName') return this.firstName

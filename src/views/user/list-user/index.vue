@@ -238,21 +238,25 @@ export default {
     },
     handleDownload () {
       this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
+      Promise.all([
+        import('@/vendor/Export2Excel'),
+        userService.queryUsers({ ...this.listQuery, start: 0, limit: 10000 })
+      ]).then(([excel, allUsers]) => {
         const tHeader = ['First Name', 'Last Name', 'Email', 'Has Linked Account', 'Swaps', 'Emotion Cycles']
         const filterVal = ['firstName', 'lastName', 'email', 'hasActiveLinks', 'swapsCount', 'emotionCyclesCount']
-        const data = this.formatJson(filterVal)
+        const data = this.formatJson(filterVal, allUsers)
         excel.export_json_to_excel({
           header: tHeader,
           data,
           filename: 'List Users',
           wsname: 'Users'
         })
+      }).finally(() => {
         this.downloadLoading = false
       })
     },
-    formatJson (filterVal) {
-      return this.users.map(v => filterVal.map(j => {
+    formatJson (filterVal, users) {
+      return (users || this.users).map(v => filterVal.map(j => {
         if (j === 'firstName' && v.secret) return 'Secret'
         if (j === 'lastName' && v.secret) return 'Secret'
         if (j === 'email' && v.secret) return '—'
