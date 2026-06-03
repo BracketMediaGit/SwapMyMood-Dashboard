@@ -13,6 +13,7 @@ const getters = {
   errorLogs: state => state.errorLog.logs,
   users: state => state.user.users,
   statistics: state => state.statistics.statistics,
+  monthlyStats: state => state.statistics.monthlyStats,
   survey: state => state.survey,
   swap: state => state.swap,
   emotionCycle: state => state.emotionCycle,

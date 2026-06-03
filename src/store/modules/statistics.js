@@ -1,10 +1,14 @@
 const state = {
-  statistics: {}
+  statistics: {},
+  monthlyStats: []
 }
 
 const mutations = {
   SET_STATISTICS: (state, statistics) => {
     state.statistics = statistics
+  },
+  SET_MONTHLY_STATS: (state, monthlyStats) => {
+    state.monthlyStats = monthlyStats
   }
 }
 
