@@ -90,6 +90,7 @@ export default {
         })
     },
     filterData (data) {
+      if (!data || !data[0] || !data[1]) return this.getStatistics()
       this.$loading()
       this.filter = true
       this.loading = true
