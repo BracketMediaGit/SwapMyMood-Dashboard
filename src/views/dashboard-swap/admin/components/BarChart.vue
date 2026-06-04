@@ -50,67 +50,69 @@ export default {
   },
   methods: {
     initChart () {
-      this.chart = echarts.init(this.$el, 'macarons')
+      this.chart = echarts.init(this.$el)
+
+      const colors = ['#409EFF', '#67C23A', '#E65D6E', '#d4900a', '#30B08F']
+      const labels = ['Users', 'SWAPS', 'Emotional Cycles', 'Users w/ Linked', 'Total Linked']
+      const values = [
+        this.statistics.usersCount || 0,
+        this.statistics.swapsCount || 0,
+        this.statistics.emotionCyclesCount || 0,
+        this.statistics.usersWithLinkedAccountsCount || 0,
+        this.statistics.totalLinkedAccountsCount || 0
+      ]
 
       this.chart.setOption({
         tooltip: {
           trigger: 'axis',
-          axisPointer: { // 坐标轴指示器，坐标轴触发有效
-            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
-          }
+          axisPointer: { type: 'shadow' },
+          backgroundColor: '#fff',
+          borderColor: '#e4e7ed',
+          borderWidth: 1,
+          textStyle: { color: '#374151', fontFamily: 'Inter, sans-serif', fontSize: 12 },
+          formatter: params => `<b>${params[0].name}</b><br/>${params[0].value.toLocaleString()}`
         },
         grid: {
-          top: 10,
-          left: '2%',
-          right: '2%',
-          bottom: '3%',
+          top: 16,
+          left: 0,
+          right: 0,
+          bottom: 0,
           containLabel: true
         },
         xAxis: [{
           type: 'category',
-          data: ['Users', 'SWAPS', 'Emotional Cycles', 'Users with Linked Accounts', 'Total Linked Accounts'],
-          axisTick: {
-            alignWithLabel: true
-          }
+          data: labels,
+          axisTick: { show: false },
+          axisLine: { lineStyle: { color: '#e4e7ed' } },
+          axisLabel: { color: '#64748b', fontFamily: 'Inter, sans-serif', fontSize: 11 }
         }],
         yAxis: [{
           type: 'value',
-          axisTick: {
-            show: false
-          }
+          minInterval: 1,
+          splitLine: { lineStyle: { color: '#f1f5f9' } },
+          axisTick: { show: false },
+          axisLine: { show: false },
+          axisLabel: { color: '#64748b', fontFamily: 'Inter, sans-serif', fontSize: 11 }
         }],
         series: [{
           name: 'Total',
           type: 'bar',
-          stack: 'vistors',
-          barWidth: '50%',
-          data: [
-            {
-              value: this.statistics.usersCount,
-              itemStyle: { color: '#304156' }
+          barMaxWidth: 56,
+          barCategoryGap: '40%',
+          data: values.map((value, i) => ({
+            value,
+            itemStyle: {
+              color: colors[i],
+              borderRadius: [6, 6, 0, 0],
+              opacity: 0.9
             },
-            {
-              value: this.statistics.swapsCount,
-              itemStyle: { color: '#304156' }
-            },
-            {
-              value: this.statistics.emotionCyclesCount,
-              itemStyle: { color: '#304156' }
-            },
-            {
-              value: this.statistics.usersWithLinkedAccountsCount || 0,
-              itemStyle: { color: '#304156' }
-            },
-            {
-              value: this.statistics.totalLinkedAccountsCount || 0,
-              itemStyle: { color: '#304156' }
+            emphasis: {
+              itemStyle: { opacity: 1 }
             }
-          ],
-          animationDuration
-        }],
-        graph: {
-          color: ['#d87c7c', '#919e8b', '#d7ab82', '#6e7074', '#61a0a8', '#efa18d', '#787464', '#cc7e63', '#724e58', '#4b565b']
-        }
+          })),
+          animationDuration: 1200,
+          animationEasing: 'cubicOut'
+        }]
       })
     }
   }

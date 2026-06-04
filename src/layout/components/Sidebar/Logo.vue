@@ -33,7 +33,7 @@ export default {
 
 <style lang="scss" scoped>
 .sidebarLogoFade-enter-active {
-  transition: opacity 1.5s;
+  transition: opacity 0.3s;
 }
 
 .sidebarLogoFade-enter,
@@ -68,7 +68,7 @@ export default {
       font-weight: 600;
       line-height: 50px;
       font-size: 14px;
-      font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
+      font-family: 'Inter', Helvetica Neue, Arial, Helvetica, sans-serif;
       vertical-align: middle;
     }
   }

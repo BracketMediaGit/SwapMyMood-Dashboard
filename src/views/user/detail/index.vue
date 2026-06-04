@@ -1,51 +1,40 @@
 <template>
   <div v-loading="loading" class="app-container">
+
     <div class="filter-container">
-      <el-select v-model="listQuery.sortBy" class="filter-item filter-item--select">
+      <el-select v-model="listQuery.sortBy" size="small" class="filter-item filter-item--select">
         <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
       </el-select>
       <date-picker class="filter-item filter-item--date" @change="setDatePickerData" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        Search
-      </el-button>
-      <el-button v-waves class="filter-item" type="danger" icon="el-icon-close" @click="clearFilter">
-        Clear
-      </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
-        Export
-      </el-button>
-      <el-button v-if="isLinkedAccount" class="filter-item" type="danger" icon="el-icon-connection" @click="handleUnlink">
-        Unlink Account
-      </el-button>
-      <el-button v-if="isRoot" class="filter-item" type="danger" icon="el-icon-delete" @click="handleDeleteAccount">
-        Delete Account
-      </el-button>
+      <el-button v-waves size="small" class="filter-item" icon="el-icon-search" @click="handleFilter">Search</el-button>
+      <el-button v-waves size="small" class="filter-item" icon="el-icon-close" @click="clearFilter">Clear</el-button>
+      <el-button v-waves size="small" :loading="downloadLoading" class="filter-item" icon="el-icon-download" @click="handleDownload">Export</el-button>
+      <el-button v-if="isLinkedAccount" size="small" class="filter-item" type="danger" plain icon="el-icon-connection" @click="handleUnlink">Unlink</el-button>
+      <el-button v-if="isRoot" size="small" class="filter-item" type="danger" plain icon="el-icon-delete" @click="handleDeleteAccount">Delete Account</el-button>
     </div>
 
-    <el-row style="margin-bottom: 20px; align-items: center;">
-      <h2 style="display: inline-block; margin-right: 15px;">
+    <div class="user-header">
+      <div class="user-header__name">
         {{ secret ? 'Private User' : `${firstName} ${lastName}` }}
-      </h2>
-      <el-tag v-if="!isLinkedAccount && hasActiveLinks" type="success" size="medium">
-        <svg-icon icon-class="link" style="margin-right: 4px;" />
-        Has Linked Accounts
-      </el-tag>
-      <div v-if="displayEmail" style="margin-top: 6px; font-size: 14px; color: #888;">
-        {{ displayEmail }}
+        <el-tag v-if="!isLinkedAccount && hasActiveLinks" type="success" size="small" style="margin-left:10px;vertical-align:middle;">
+          Linked
+        </el-tag>
       </div>
-    </el-row>
+      <div v-if="displayEmail" class="user-header__email">{{ displayEmail }}</div>
+    </div>
 
-    <el-row>
-      <h1>SWAPS</h1>
+    <div class="section-block">
+      <div class="section-label">Swaps</div>
       <div class="table-responsive">
         <el-table
           :key="tableKey"
           v-loading="listLoading"
           :data="swaps"
-          border
           fit
           highlight-current-row
-          height="15rem"
+          class="clickable-table"
+          max-height="400"
+          @row-click="row => goToSwapDetails(row.id)"
         >
           <el-table-column label="Date" align="center" min-width="95">
             <template slot-scope="{row}">
@@ -67,38 +56,28 @@
               <span>{{ row.problem ? row.problem.name : '' }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="Emotional Cycle" prop="emotionCycle" align="center">
+          <el-table-column label="Emotional Cycle" prop="emotionCycle" align="center" width="140">
             <template slot-scope="{row}">
-              <el-button v-if="row.emotionCycle" size="mini" type="success" @click="goToEcDetail(row.emotionCycle.id)">
-                YES
-              </el-button>
-              <el-button v-else disabled type="danger" size="mini">
-                NO
-              </el-button>
-            </template>
-          </el-table-column>
-          <el-table-column label="Action" align="center" class-name="small-padding fixed-width" min-width="120">
-            <template slot-scope="{row}">
-              <el-button type="primary" size="mini" @click="goToSwapDetails(row.id)">
-                VIEW DETAILS
-              </el-button>
+              <el-tag v-if="row.emotionCycle" type="success" size="small" style="cursor:pointer" @click.native.stop="goToEcDetail(row.emotionCycle.id)">Yes</el-tag>
+              <el-tag v-else type="info" size="small">No</el-tag>
             </template>
           </el-table-column>
         </el-table>
       </div>
-    </el-row>
+    </div>
 
-    <el-row>
-      <h1>EMOTIONAL CYCLES</h1>
+    <div class="section-block">
+      <div class="section-label">Emotional Cycles</div>
       <div class="table-responsive">
         <el-table
           :key="tableKey"
           v-loading="listLoading"
           :data="emotionCycles"
-          border
           fit
           highlight-current-row
-          height="15rem"
+          class="clickable-table"
+          max-height="400"
+          @row-click="row => goToEcDetail(row.id)"
         >
           <el-table-column label="Date" align="center" min-width="95">
             <template slot-scope="{row}">
@@ -115,16 +94,10 @@
               <span>{{ row.session | parseSession }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="Action" align="center" class-name="small-padding fixed-width" min-width="120">
-            <template slot-scope="{row}">
-              <el-button type="primary" size="mini" @click="goToEcDetail(row.id)">
-                VIEW DETAILS
-              </el-button>
-            </template>
-          </el-table-column>
         </el-table>
       </div>
-    </el-row>
+    </div>
+
   </div>
 </template>
 
@@ -407,4 +380,33 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.user-header {
+  padding: 20px 0 16px;
+
+  &__name {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a202c;
+    line-height: 1.3;
+  }
+
+  &__email {
+    font-size: 13px;
+    color: #8a94a6;
+    margin-top: 4px;
+  }
+}
+
+.section-block {
+  margin-bottom: 24px;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #8a94a6;
+  margin-bottom: 10px;
+}
 </style>

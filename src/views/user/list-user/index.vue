@@ -1,30 +1,25 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.firstName" placeholder="First Name" class="filter-item filter-item--input" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.lastName" placeholder="Last Name" class="filter-item filter-item--input" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.sortBy" class="filter-item filter-item--select" @change="handleFilter">
+      <el-input v-model="listQuery.firstName" size="small" placeholder="First Name" class="filter-item filter-item--input" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.lastName" size="small" placeholder="Last Name" class="filter-item filter-item--input" @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.sortBy" size="small" class="filter-item filter-item--select" @change="handleFilter">
         <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
       </el-select>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        Search
-      </el-button>
-      <el-button v-waves class="filter-item" type="danger" icon="el-icon-close" @click="clearFilter">
-        Clear
-      </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
-        Export
-      </el-button>
+      <el-button v-waves size="small" class="filter-item" icon="el-icon-search" @click="handleFilter">Search</el-button>
+      <el-button v-waves size="small" class="filter-item" icon="el-icon-close" @click="clearFilter">Clear</el-button>
+      <el-button v-waves size="small" :loading="downloadLoading" class="filter-item" icon="el-icon-download" @click="handleDownload">Export</el-button>
     </div>
 
     <el-table
       :key="tableKey"
       v-loading="listLoading"
       :data="users"
-      border
       fit
       highlight-current-row
+      class="clickable-table"
       style="width: 100%;"
+      @row-click="row => goToDetails(row.id)"
       @sort-change="sortChange"
     >
       <el-table-column label="First Name" min-width="150px">
@@ -89,13 +84,10 @@
           </template>
         </template>
       </el-table-column>
-      <el-table-column label="Action" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column v-if="isLinkedAccount" label="Action" align="center" width="120" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button type="primary" size="mini" @click="goToDetails(row.id)">
-            VIEW USER
-          </el-button>
-          <el-button v-if="isLinkedAccount" type="danger" size="mini" @click="handleUnlink(row.id, row.linkedAccountId)">
-            UNLINK
+          <el-button type="danger" size="mini" @click.stop="handleUnlink(row.id, row.linkedAccountId)">
+            Unlink
           </el-button>
         </template>
       </el-table-column>

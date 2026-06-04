@@ -1,30 +1,25 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.firstName" placeholder="First Name" class="filter-item filter-item--input" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.lastName" placeholder="Last Name" class="filter-item filter-item--input" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.sortBy" class="filter-item filter-item--select">
+      <el-input v-model="listQuery.firstName" size="small" placeholder="First Name" class="filter-item filter-item--input" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.lastName" size="small" placeholder="Last Name" class="filter-item filter-item--input" @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.sortBy" size="small" class="filter-item filter-item--select">
         <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
       </el-select>
       <date-picker class="filter-item filter-item--date" @change="setDatePickerData" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        Search
-      </el-button>
-      <el-button v-waves class="filter-item" type="danger" icon="el-icon-close" @click="clearFilter">
-        Clear
-      </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
-        Export
-      </el-button>
+      <el-button v-waves size="small" class="filter-item" icon="el-icon-search" @click="handleFilter">Search</el-button>
+      <el-button v-waves size="small" class="filter-item" icon="el-icon-close" @click="clearFilter">Clear</el-button>
+      <el-button v-waves size="small" :loading="downloadLoading" class="filter-item" icon="el-icon-download" @click="handleDownload">Export</el-button>
     </div>
 
     <el-table
       :key="tableKey"
       v-loading="listLoading"
       :data="swap.swaps"
-      border
       fit
       highlight-current-row
+      class="clickable-table"
+      @row-click="openDrawer"
       @sort-change="sortChange"
     >
       <el-table-column label="Date" width="150px" align="center" prop="createdAt" sortable="custom">
@@ -39,12 +34,12 @@
       </el-table-column>
       <el-table-column label="First Name" min-width="120px">
         <template slot-scope="{row}">
-          <span class="link-type">{{ row.secret ? 'Private' : row.firstName }}</span>
+          <span>{{ row.secret ? 'Private' : row.firstName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Last Name" min-width="120px">
         <template slot-scope="{row}">
-          <span class="link-type">{{ row.secret ? 'Private' : row.lastName }}</span>
+          <span>{{ row.secret ? 'Private' : row.lastName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Session" width="100px" align="center">
@@ -52,7 +47,7 @@
           <span>{{ row.session | parseSession }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Problem" prop="problem" width="120px" align="center">
+      <el-table-column label="Problem" prop="problem" min-width="120px">
         <template slot-scope="{row}">
           <span>{{ row.problem ? row.problem.name : '' }}</span>
         </template>
@@ -64,26 +59,71 @@
           <el-tag v-else type="warning" size="small">Maybe</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="Emotional Cycle" prop="emotionCycle" width="150px" align="center">
+      <el-table-column label="Emotional Cycle" prop="emotionCycle" width="140px" align="center">
         <template slot-scope="{row}">
-          <el-button v-if="row.emotionCycle" size="mini" type="success" @click="goToEcDetail(row.emotionCycle)">
-            YES
-          </el-button>
-          <el-button v-else disabled type="danger" size="mini">
-            NO
-          </el-button>
-        </template>
-      </el-table-column>
-      <el-table-column label="Action" align="center" width="150px" class-name="small-padding fixed-width">
-        <template slot-scope="{row}">
-          <el-button type="primary" size="mini" @click="goToDetails(row.id)">
-            VIEW DETAILS
-          </el-button>
+          <el-tag v-if="row.emotionCycle" type="success" size="small">Yes</el-tag>
+          <el-tag v-else type="info" size="small">No</el-tag>
         </template>
       </el-table-column>
     </el-table>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getSwaps" />
+
+    <!-- Swap Detail Drawer -->
+    <el-drawer
+      :visible.sync="drawerVisible"
+      direction="rtl"
+      size="460px"
+      :before-close="closeDrawer"
+      :show-close="true"
+    >
+      <div slot="title" class="sd-header">
+        <div class="sd-header__info">
+          <span class="sd-header__name">{{ drawerTitle }}</span>
+          <span v-if="drawerData" class="sd-header__meta">
+            {{ new Date(drawerData.createdAt) | parseDate }} · {{ new Date(drawerData.createdAt) | parseTime }} · Session {{ drawerData.session }}
+          </span>
+        </div>
+        <el-button v-if="drawerItemId" size="mini" plain icon="el-icon-top-right" @click="goToDetails(drawerItemId)">Full page</el-button>
+      </div>
+
+      <div v-if="drawerLoading" class="sd-loading">
+        <i class="el-icon-loading" />
+      </div>
+      <div v-else-if="drawerData" class="sd-body">
+        <div class="sd-section">
+          <p class="sd-label">Problem</p>
+          <el-tag size="medium" type="primary">{{ drawerData.problem ? drawerData.problem.name : '—' }}</el-tag>
+        </div>
+
+        <div v-if="drawerData.alternatives && drawerData.alternatives.length" class="sd-section">
+          <p class="sd-label">Alternatives</p>
+          <el-tag v-for="a in drawerData.alternatives" :key="a.id" size="medium">{{ a.name }}</el-tag>
+        </div>
+
+        <div class="sd-section">
+          <p class="sd-label">Satisfaction</p>
+          <el-tag size="medium" :type="drawerSatisfied === 'Yes' ? 'success' : drawerSatisfied === 'No' ? 'danger' : 'warning'">
+            {{ drawerSatisfactionLevel }}
+          </el-tag>
+        </div>
+
+        <div v-if="drawerSatisfactions.length" class="sd-section">
+          <p class="sd-label">I'm satisfied because</p>
+          <el-tag v-for="s in drawerSatisfactions" :key="s.id" size="medium" type="success">{{ s.name }}</el-tag>
+        </div>
+
+        <div v-if="drawerData.notes && drawerData.notes.length" class="sd-section">
+          <p class="sd-label">Notes</p>
+          <el-tag v-for="n in drawerData.notes" :key="n.id" size="medium" type="info">{{ n.name }}</el-tag>
+        </div>
+
+        <div v-if="drawerData.emotionCycle" class="sd-section">
+          <p class="sd-label">Emotional Cycle</p>
+          <el-tag size="medium" type="success">Has associated emotional cycle</el-tag>
+        </div>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
@@ -121,14 +161,38 @@ export default {
         { label: 'Satisfaction Level Ascending (Yes -> No)', key: 'satisfactionLevelOrder asc' },
         { label: 'Satisfaction Level Descending (No -> Yes)', key: 'satisfactionLevelOrder desc' }
       ],
-      downloadLoading: false
+      downloadLoading: false,
+      drawerVisible: false,
+      drawerLoading: false,
+      drawerData: null,
+      drawerItemId: null
     }
   },
   computed: {
-    ...mapGetters([
-      'swap',
-      'statistics'
-    ])
+    ...mapGetters(['swap', 'statistics']),
+    drawerTitle () {
+      if (!this.drawerData) return 'SWAP'
+      return this.drawerData.secret ? 'Private' : `${this.drawerData.firstName} ${this.drawerData.lastName}`
+    },
+    drawerSatisfied () {
+      if (!this.drawerData) return ''
+      if (!this.drawerData.satisfactionLevels) return 'Maybe'
+      const s = this.drawerData.satisfactionLevels.find(l => l.selected)
+      if (!s) return 'Maybe'
+      const n = s.name.toLowerCase()
+      if (n.includes('yes') || n.includes('satisfied')) return 'Yes'
+      if (n.includes('no') || n.includes('not')) return 'No'
+      return 'Maybe'
+    },
+    drawerSatisfactionLevel () {
+      if (!this.drawerData || !this.drawerData.satisfactionLevels) return 'N/A'
+      const s = this.drawerData.satisfactionLevels.find(l => l.selected)
+      return s ? s.name : 'N/A'
+    },
+    drawerSatisfactions () {
+      if (!this.drawerData || !this.drawerData.satisfactions) return []
+      return this.drawerData.satisfactions.filter(s => s.selected)
+    }
   },
   created () {
     if (!this.statistics.swapsCount) {
@@ -147,6 +211,20 @@ export default {
       'swap/SET_SWAPS',
       'statistics/SET_STATISTICS'
     ]),
+    openDrawer (row) {
+      this.drawerItemId = row.id
+      this.drawerVisible = true
+      this.drawerLoading = true
+      this.drawerData = null
+      swapService.getSwapById(row.id)
+        .then(res => { this.drawerData = res })
+        .finally(() => { this.drawerLoading = false })
+    },
+    closeDrawer () {
+      this.drawerVisible = false
+      this.drawerData = null
+      this.drawerItemId = null
+    },
     goToEcDetail (id) {
       this.$router.push(`/emotioncycle/detail/${id}`)
     },
@@ -289,3 +367,4 @@ export default {
   }
 }
 </script>
+

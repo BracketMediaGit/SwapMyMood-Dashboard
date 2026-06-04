@@ -1,30 +1,25 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.firstName" placeholder="First Name" class="filter-item filter-item--input" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.lastName" placeholder="Last Name" class="filter-item filter-item--input" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.sortBy" class="filter-item filter-item--select">
+      <el-input v-model="listQuery.firstName" size="small" placeholder="First Name" class="filter-item filter-item--input" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.lastName" size="small" placeholder="Last Name" class="filter-item filter-item--input" @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.sortBy" size="small" class="filter-item filter-item--select">
         <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
       </el-select>
       <date-picker class="filter-item filter-item--date" @change="setDatePickerData" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        Search
-      </el-button>
-      <el-button v-waves class="filter-item" type="danger" icon="el-icon-close" @click="clearFilter">
-        Clear
-      </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
-        Export
-      </el-button>
+      <el-button v-waves size="small" class="filter-item" icon="el-icon-search" @click="handleFilter">Search</el-button>
+      <el-button v-waves size="small" class="filter-item" icon="el-icon-close" @click="clearFilter">Clear</el-button>
+      <el-button v-waves size="small" :loading="downloadLoading" class="filter-item" icon="el-icon-download" @click="handleDownload">Export</el-button>
     </div>
 
     <el-table
       :key="tableKey"
       v-loading="listLoading"
       :data="emotionCycle.emotionCycles"
-      border
       fit
       highlight-current-row
+      class="clickable-table"
+      @row-click="openDrawer"
       @sort-change="sortChange"
     >
       <el-table-column label="Date" width="150px" align="center" prop="createdAt" sortable="custom">
@@ -39,12 +34,12 @@
       </el-table-column>
       <el-table-column label="First Name" min-width="120px">
         <template slot-scope="{row}">
-          <span class="link-type">{{ row.secret ? 'Private' : row.firstName }}</span>
+          <span>{{ row.secret ? 'Private' : row.firstName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Last Name" min-width="120px">
         <template slot-scope="{row}">
-          <span class="link-type">{{ row.secret ? 'Private' : row.lastName }}</span>
+          <span>{{ row.secret ? 'Private' : row.lastName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Session" width="100px" align="center">
@@ -52,16 +47,60 @@
           <span>{{ row.session | parseSession }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Action" align="center" width="150px" class-name="small-padding fixed-width">
-        <template slot-scope="{row}">
-          <el-button type="primary" size="mini" @click="goToDetails(row.id)">
-            VIEW DETAILS
-          </el-button>
-        </template>
-      </el-table-column>
     </el-table>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getEmotionCycles" />
+
+    <!-- EC Detail Drawer -->
+    <el-drawer
+      :visible.sync="drawerVisible"
+      direction="rtl"
+      size="500px"
+      :before-close="closeDrawer"
+      :show-close="true"
+    >
+      <div slot="title" class="sd-header">
+        <div class="sd-header__info">
+          <span class="sd-header__name">{{ drawerTitle }}</span>
+          <span v-if="drawerData" class="sd-header__meta">
+            {{ new Date(drawerData.createdAt) | parseDate }} · {{ new Date(drawerData.createdAt) | parseTime }} · Session {{ drawerData.session }}
+          </span>
+        </div>
+        <el-button v-if="drawerItemId" size="mini" plain icon="el-icon-top-right" @click="goToDetails(drawerItemId)">Full page</el-button>
+      </div>
+
+      <div v-if="drawerLoading" class="sd-loading">
+        <i class="el-icon-loading" />
+      </div>
+      <div v-else-if="drawerData" class="sd-body">
+        <div v-if="drawerData.triggers && drawerData.triggers.length" class="sd-section">
+          <p class="sd-label">Triggers</p>
+          <el-tag v-for="t in drawerData.triggers" :key="t.id" size="medium" type="danger">{{ t.name }}</el-tag>
+        </div>
+
+        <div v-if="drawerData.emotions && drawerData.emotions.length" class="sd-section">
+          <p class="sd-label">Emotions</p>
+          <el-tag v-for="e in drawerData.emotions" :key="e.id" size="medium" type="warning">{{ e.name }}</el-tag>
+        </div>
+
+        <template v-if="drawerData.sensations">
+          <div v-for="(items, zone) in drawerData.sensations" v-if="items && items.length" :key="zone" class="sd-section">
+            <p class="sd-label">{{ zone | sensationLabel }}</p>
+            <el-tag v-for="s in items" :key="s.id" size="medium">{{ s.name }}</el-tag>
+          </div>
+        </template>
+
+        <div v-if="drawerData.thoughts && drawerData.thoughts.length" class="sd-section">
+          <p class="sd-label">Thoughts</p>
+          <el-tag v-for="t in drawerData.thoughts" :key="t.id" size="medium" type="info">{{ t.name }}</el-tag>
+        </div>
+
+        <div v-if="drawerData.behaviors && drawerData.behaviors.length" class="sd-section">
+          <p class="sd-label">Behaviors</p>
+          <el-tag v-for="b in drawerData.behaviors" :key="b.id" size="medium" type="info">{{ b.name }}</el-tag>
+        </div>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
@@ -97,14 +136,32 @@ export default {
         { label: 'Date Time Descending', key: 'createdAt desc' },
         { label: 'Date Time Ascending', key: 'createdAt asc' }
       ],
-      downloadLoading: false
+      downloadLoading: false,
+      drawerVisible: false,
+      drawerLoading: false,
+      drawerData: null,
+      drawerItemId: null
+    }
+  },
+  filters: {
+    sensationLabel (zone) {
+      const map = {
+        head: 'Head, Face, Throat, Neck',
+        chest: 'Chest, Heart, Breathing',
+        abdomen: 'Abdomen',
+        arm: 'Arms',
+        leg: 'Legs',
+        wholebody: 'Whole Body'
+      }
+      return map[zone] || zone
     }
   },
   computed: {
-    ...mapGetters([
-      'emotionCycle',
-      'statistics'
-    ])
+    ...mapGetters(['emotionCycle', 'statistics']),
+    drawerTitle () {
+      if (!this.drawerData) return 'Emotional Cycle'
+      return this.drawerData.secret ? 'Private' : `${this.drawerData.firstName} ${this.drawerData.lastName}`
+    }
   },
   created () {
     if (!this.statistics.emotionCyclesCount) {
@@ -123,6 +180,20 @@ export default {
       'emotionCycle/SET_EC',
       'statistics/SET_STATISTICS'
     ]),
+    openDrawer (row) {
+      this.drawerItemId = row.id
+      this.drawerVisible = true
+      this.drawerLoading = true
+      this.drawerData = null
+      emotionCycleService.getEmotionCycleById(row.id)
+        .then(res => { this.drawerData = res })
+        .finally(() => { this.drawerLoading = false })
+    },
+    closeDrawer () {
+      this.drawerVisible = false
+      this.drawerData = null
+      this.drawerItemId = null
+    },
     setDatePickerData (data) {
       if (data) {
         if (data[0].getTime() === data[1].getTime()) {
@@ -232,3 +303,4 @@ export default {
   }
 }
 </script>
+

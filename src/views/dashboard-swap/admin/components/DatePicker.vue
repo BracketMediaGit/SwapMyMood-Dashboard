@@ -1,10 +1,11 @@
 <template>
-  <div class="container">
-    <span>FILTER BY DATE</span>
+  <div class="filter-bar">
+    <span class="filter-label">Filter by date</span>
     <el-date-picker
       v-model="value"
       class="datepicker"
       type="daterange"
+      size="small"
       align="right"
       unlink-panels
       start-placeholder="Start date"
@@ -12,7 +13,7 @@
       :picker-options="pickerOptions"
       v-on="$listeners"
     />
-    <el-button type="primary" @click="filter">FILTER</el-button>
+    <el-button size="small" type="primary" @click="filter">Filter</el-button>
   </div>
 </template>
 
@@ -59,14 +60,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.container {
+.filter-bar {
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin: auto;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filter-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #8a94a6;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
 }
 
 .datepicker {
-  margin: 1rem;
+  width: 260px !important;
 }
 </style>

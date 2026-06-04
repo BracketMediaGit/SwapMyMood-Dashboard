@@ -11,12 +11,9 @@
         <!-- <error-log class="errLog-container right-menu-item hover-effect" /> -->
 
         <screenfull id="screenfull" class="right-menu-item hover-effect" />
-        <el-tooltip content="Global Size" effect="dark" placement="bottom">
-          <size-select id="size-select" class="right-menu-item hover-effect" />
-        </el-tooltip>
 
       </template>
-      <el-button type="text" class="right-menu-item hover-effect" @click="logout">Log Out</el-button>
+      <el-button type="text" class="logout-btn" @click="logout">Log Out</el-button>
 
       <!-- <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
@@ -51,7 +48,6 @@ import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 // import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
-import SizeSelect from '@/components/SizeSelect'
 // import Search from '@/components/HeaderSearch'
 
 export default {
@@ -59,8 +55,7 @@ export default {
     Breadcrumb,
     Hamburger,
     // ErrorLog,
-    Screenfull,
-    SizeSelect
+    Screenfull
     // Search
   },
   computed: {
@@ -89,6 +84,7 @@ export default {
   position: relative;
   background: #fff;
   box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  border-bottom: 3px solid #FEC171;
 
   .hamburger-container {
     line-height: 46px;
@@ -125,7 +121,7 @@ export default {
       display: inline-block;
       padding: 0 8px;
       height: 100%;
-      font-size: 18px;
+      font-size: 16px;
       color: #5a5e66;
       vertical-align: text-bottom;
 
@@ -136,6 +132,29 @@ export default {
         &:hover {
           background: rgba(0, 0, 0, .025)
         }
+      }
+    }
+
+    .logout-btn {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 500;
+      color: #8a94a6;
+      letter-spacing: 0.3px;
+      padding: 0 14px;
+      height: 28px;
+      line-height: 26px;
+      border: 1px solid #e4e7ed;
+      border-radius: 6px;
+      margin-right: 8px;
+      margin-top: 11px;
+      vertical-align: top;
+      transition: all 0.2s;
+
+      &:hover {
+        color: #304156;
+        border-color: #304156;
+        background: transparent;
       }
     }
 
