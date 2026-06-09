@@ -7,11 +7,9 @@
           <div class="list-complete-item-handle2" @click="pushEle(element)">
             {{ element.name }}
           </div>
-          <div style="position:absolute;right:0px;">
-            <span style="float: right ;margin-top: -20px;margin-right:5px;" @click="deleteElem(element)">
-              <i style="color:#ff4949" class="el-icon-delete" />
-            </span>
-          </div>
+          <span class="list-complete-item-delete" @click="deleteElem(element)">
+            <i style="color:#ff4949" class="el-icon-delete" />
+          </span>
         </div>
       </draggable>
     </div>
@@ -22,11 +20,9 @@
           <div class="list-complete-item-handle">
             {{ element.name }}
           </div>
-          <div style="position:absolute;right:0px;">
-            <span style="float: right ;margin-top: -20px;margin-right:5px;" @click="deleteFromTemplate(element)">
-              <i style="color:#ff4949" class="el-icon-delete" />
-            </span>
-          </div>
+          <span class="list-complete-item-delete" @click="deleteFromTemplate(element)">
+            <i style="color:#ff4949" class="el-icon-delete" />
+          </span>
         </div>
       </draggable>
     </div>
@@ -139,7 +135,8 @@ export default {
 
 .list-complete-item {
   cursor: pointer;
-  position: relative;
+  display: flex;
+  align-items: center;
   font-size: 14px;
   padding: 5px 12px;
   margin-top: 4px;
@@ -147,18 +144,19 @@ export default {
   transition: all 1s;
 }
 
-.list-complete-item-handle {
+.list-complete-item-handle,
+.list-complete-item-handle2 {
+  flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  margin-right: 50px;
 }
 
-.list-complete-item-handle2 {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  margin-right: 20px;
+.list-complete-item-delete {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding-left: 8px;
 }
 
 .list-complete-item.sortable-chosen {
