@@ -10,8 +10,19 @@
       <el-button v-waves size="small" class="filter-item" icon="el-icon-close" @click="clearFilter">Clear</el-button>
       <el-button v-waves size="small" :loading="downloadLoading" class="filter-item" icon="el-icon-download" @click="handleDownload">Export</el-button>
       <el-button v-if="isLinkedAccount" size="small" class="filter-item" type="danger" plain icon="el-icon-connection" @click="handleUnlink">Unlink</el-button>
+      <el-button v-if="!secret" size="small" class="filter-item" plain icon="el-icon-lock" @click="showResetDialog = true">Reset Password</el-button>
       <el-button v-if="isRoot" size="small" class="filter-item" type="danger" plain icon="el-icon-delete" @click="handleDeleteAccount">Delete Account</el-button>
     </div>
+
+    <!-- Reset Password Dialog -->
+    <el-dialog title="Reset Password" :visible.sync="showResetDialog" width="380px">
+      <p style="margin:0 0 8px;color:#606266;font-size:13px;">Send a password reset email to:</p>
+      <p style="margin:0;font-weight:600;font-size:14px;color:#1a202c;">{{ displayEmail || 'this user' }}</p>
+      <span slot="footer">
+        <el-button size="small" @click="showResetDialog = false">Cancel</el-button>
+        <el-button size="small" type="primary" :loading="resetLoading" @click="handleResetPassword">Send Email</el-button>
+      </span>
+    </el-dialog>
 
     <div class="user-header">
       <div class="user-header__name">
@@ -136,7 +147,9 @@ export default {
         { label: 'Date Time Ascending', key: 'asc' },
         { label: 'Date Time Descending', key: 'desc' }
       ],
-      downloadLoading: false
+      downloadLoading: false,
+      showResetDialog: false,
+      resetLoading: false
     }
   },
   computed: {
@@ -313,6 +326,25 @@ export default {
     formatEcJson (filterVal) {
       if (filterVal && filterVal.length) return filterVal.map(v => v.name)
       return ''
+    },
+    handleResetPassword () {
+      const email = this.displayEmail
+      if (!email) {
+        this.$message.error('No email available for this user')
+        return
+      }
+      this.resetLoading = true
+      userService.resetPassword(email)
+        .then(() => {
+          this.$message.success('Password reset email sent')
+          this.showResetDialog = false
+        })
+        .catch(err => {
+          this.$message.error((err && err.detail) || 'Error sending reset email')
+        })
+        .finally(() => {
+          this.resetLoading = false
+        })
     },
     handleDeleteAccount () {
       const name = this.secret ? 'this user' : `${this.firstName} ${this.lastName}`

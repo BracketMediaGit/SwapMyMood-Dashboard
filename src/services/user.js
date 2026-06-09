@@ -22,6 +22,12 @@ userService.createUser = (newUser) => {
     .catch(err => { throw err.data })
 }
 
+userService.createRegularUser = (newUser) => {
+  return api.post('/users', newUser)
+    .then(res => res.data)
+    .catch(err => { throw err.data })
+}
+
 userService.resetPassword = (email) => {
   return api.post('/users/password', { email })
     .then(res => res.data)

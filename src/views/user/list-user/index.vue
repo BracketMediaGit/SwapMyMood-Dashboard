@@ -8,8 +8,56 @@
       </el-select>
       <el-button v-waves size="small" class="filter-item" icon="el-icon-search" @click="handleFilter">Search</el-button>
       <el-button v-waves size="small" class="filter-item" icon="el-icon-close" @click="clearFilter">Clear</el-button>
-      <el-button v-waves size="small" :loading="downloadLoading" class="filter-item" icon="el-icon-download" @click="handleDownload">Export</el-button>
+      <el-button v-waves size="small" class="filter-item" icon="el-icon-download" :loading="downloadLoading" @click="handleDownload">Export</el-button>
+      <div class="filter-actions">
+        <el-button size="small" type="success" icon="el-icon-user" @click="showCreateUserDialog = true">Create User</el-button>
+        <el-button v-if="isRoot" size="small" type="danger" icon="el-icon-key" @click="showCreateDialog = true">Create Admin</el-button>
+      </div>
     </div>
+
+    <!-- Create User Dialog -->
+    <el-dialog title="Create User" :visible.sync="showCreateUserDialog" width="420px" @closed="resetCreateUserForm">
+      <el-form ref="createUserForm" :model="createUserForm" :rules="createRules" label-position="top" size="small">
+        <el-form-item label="First Name" prop="firstName">
+          <el-input v-model="createUserForm.firstName" placeholder="First Name" />
+        </el-form-item>
+        <el-form-item label="Last Name" prop="lastName">
+          <el-input v-model="createUserForm.lastName" placeholder="Last Name" />
+        </el-form-item>
+        <el-form-item label="Email" prop="email">
+          <el-input v-model="createUserForm.email" placeholder="email@example.com" />
+        </el-form-item>
+        <el-form-item label="Password" prop="password">
+          <el-input v-model="createUserForm.password" type="password" placeholder="Password" show-password />
+        </el-form-item>
+      </el-form>
+      <span slot="footer">
+        <el-button size="small" @click="showCreateUserDialog = false">Cancel</el-button>
+        <el-button size="small" type="primary" :loading="createUserLoading" @click="handleCreateUser">Create</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- Create Admin Dialog -->
+    <el-dialog title="Create Admin User" :visible.sync="showCreateDialog" width="420px" @closed="resetCreateForm">
+      <el-form ref="createForm" :model="createForm" :rules="createRules" label-position="top" size="small">
+        <el-form-item label="First Name" prop="firstName">
+          <el-input v-model="createForm.firstName" placeholder="First Name" />
+        </el-form-item>
+        <el-form-item label="Last Name" prop="lastName">
+          <el-input v-model="createForm.lastName" placeholder="Last Name" />
+        </el-form-item>
+        <el-form-item label="Email" prop="email">
+          <el-input v-model="createForm.email" placeholder="email@example.com" />
+        </el-form-item>
+        <el-form-item label="Password" prop="password">
+          <el-input v-model="createForm.password" type="password" placeholder="Password" show-password />
+        </el-form-item>
+      </el-form>
+      <span slot="footer">
+        <el-button size="small" @click="showCreateDialog = false">Cancel</el-button>
+        <el-button size="small" type="primary" :loading="createLoading" @click="handleCreateAdmin">Create</el-button>
+      </span>
+    </el-dialog>
 
     <el-table
       :key="tableKey"
@@ -130,7 +178,35 @@ export default {
         { label: 'Emotional Cycles Ascending', key: 'emotionCyclesCount asc' },
         { label: 'Emotional Cycles Descending', key: 'emotionCyclesCount desc' }
       ],
-      downloadLoading: false
+      downloadLoading: false,
+      showCreateUserDialog: false,
+      createUserLoading: false,
+      createUserForm: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: ''
+      },
+      showCreateDialog: false,
+      createLoading: false,
+      createForm: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: ''
+      },
+      createRules: {
+        firstName: [{ required: true, message: 'Required', trigger: 'blur' }],
+        lastName: [{ required: true, message: 'Required', trigger: 'blur' }],
+        email: [
+          { required: true, message: 'Required', trigger: 'blur' },
+          { type: 'email', message: 'Invalid email', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: 'Required', trigger: 'blur' },
+          { min: 6, message: 'Min 6 characters', trigger: 'blur' }
+        ]
+      }
     }
   },
   computed: {
@@ -259,6 +335,50 @@ export default {
     getSortClass (key) {
       return this.listQuery.sort === `+${key}` ? 'ascending' : 'descending'
     },
+    resetCreateUserForm () {
+      this.createUserForm = { firstName: '', lastName: '', email: '', password: '' }
+      this.$refs.createUserForm && this.$refs.createUserForm.resetFields()
+    },
+    handleCreateUser () {
+      this.$refs.createUserForm.validate(valid => {
+        if (!valid) return
+        this.createUserLoading = true
+        userService.createRegularUser(this.createUserForm)
+          .then(() => {
+            this.$message.success('User created successfully')
+            this.showCreateUserDialog = false
+            this.getUsers()
+          })
+          .catch(err => {
+            this.$message.error((err && err.detail) || 'Error creating user')
+          })
+          .finally(() => {
+            this.createUserLoading = false
+          })
+      })
+    },
+    resetCreateForm () {
+      this.createForm = { firstName: '', lastName: '', email: '', password: '' }
+      this.$refs.createForm && this.$refs.createForm.resetFields()
+    },
+    handleCreateAdmin () {
+      this.$refs.createForm.validate(valid => {
+        if (!valid) return
+        this.createLoading = true
+        userService.createUser(this.createForm)
+          .then(() => {
+            this.$message.success('Admin user created successfully')
+            this.showCreateDialog = false
+            this.getUsers()
+          })
+          .catch(err => {
+            this.$message.error((err && err.detail) || 'Error creating user')
+          })
+          .finally(() => {
+            this.createLoading = false
+          })
+      })
+    },
     handleUnlink (userId, linkedAccountId) {
       this.$confirm('Are you sure you want to unlink this account? This action cannot be undone.', 'Warning', {
         confirmButtonText: 'Yes, Unlink',
@@ -289,3 +409,11 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.filter-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+</style>
