@@ -32,9 +32,16 @@ const _postUser = (body) => {
   })
 }
 
-userService.createUser = (newUser) => _postUser({ role: 'root', ...newUser })
+const toApiFields = (u) => ({
+  firstname: u.firstName,
+  lastname: u.lastName,
+  email: u.email,
+  password: u.password
+})
 
-userService.createRegularUser = (newUser) => _postUser(newUser)
+userService.createUser = (newUser) => _postUser({ role: 'root', ...toApiFields(newUser) })
+
+userService.createRegularUser = (newUser) => _postUser(toApiFields(newUser))
 
 userService.resetPassword = (email) => {
   return api.post('/users/password', { email })
