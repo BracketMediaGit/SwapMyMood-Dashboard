@@ -328,8 +328,12 @@ export default {
     },
     getAdmins () {
       this.adminLoading = true
-      userService.queryUsers({ role: 'root', firstName: this.listQuery.firstName, lastName: this.listQuery.lastName })
+      const params = { role: 'root' }
+      if (this.listQuery.firstName) params.firstName = this.listQuery.firstName
+      if (this.listQuery.lastName) params.lastName = this.listQuery.lastName
+      userService.queryUsers(params)
         .then(admins => { this.adminList = admins })
+        .catch(err => { this.$message.error((err && err.detail) || 'Error loading admins') })
         .finally(() => { this.adminLoading = false })
     },
     openResetAdmin (row) {
