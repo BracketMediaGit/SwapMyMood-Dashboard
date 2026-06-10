@@ -16,17 +16,25 @@ userService.getUserDetailsById = (id) => {
     .catch(err => { throw err.data })
 }
 
-userService.createUser = (newUser) => {
-  return api.post('/users', { role: 'root', ...newUser })
-    .then(res => res.data)
-    .catch(err => { throw err.data })
+const _postUser = (body) => {
+  const base = configService.apiUrl.replace(/\/$/, '')
+  const token = getToken()
+  return fetch(`${base}/users`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: token } : {})
+    },
+    body: JSON.stringify(body)
+  }).then(res => {
+    if (!res.ok) return res.json().then(e => Promise.reject(e))
+    return res.json()
+  })
 }
 
-userService.createRegularUser = (newUser) => {
-  return api.post('/users', newUser)
-    .then(res => res.data)
-    .catch(err => { throw err.data })
-}
+userService.createUser = (newUser) => _postUser({ role: 'root', ...newUser })
+
+userService.createRegularUser = (newUser) => _postUser(newUser)
 
 userService.resetPassword = (email) => {
   return api.post('/users/password', { email })
