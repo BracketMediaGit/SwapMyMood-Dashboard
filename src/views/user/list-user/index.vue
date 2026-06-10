@@ -3,15 +3,15 @@
     <div class="filter-container">
       <el-input v-model="listQuery.firstName" size="small" placeholder="First Name" class="filter-item filter-item--input" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.lastName" size="small" placeholder="Last Name" class="filter-item filter-item--input" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.sortBy" size="small" class="filter-item filter-item--select" @change="handleFilter">
+      <el-select v-if="activeTab === 'users'" v-model="listQuery.sortBy" size="small" class="filter-item filter-item--select" @change="handleFilter">
         <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
       </el-select>
       <el-button v-waves size="small" class="filter-item" icon="el-icon-search" @click="handleFilter">Search</el-button>
       <el-button v-waves size="small" class="filter-item" icon="el-icon-close" @click="clearFilter">Clear</el-button>
-      <el-button v-waves size="small" class="filter-item" icon="el-icon-download" :loading="downloadLoading" @click="handleDownload">Export</el-button>
+      <el-button v-if="activeTab === 'users'" v-waves size="small" class="filter-item" icon="el-icon-download" :loading="downloadLoading" @click="handleDownload">Export</el-button>
       <div class="filter-actions">
-        <el-button size="small" type="success" icon="el-icon-user" @click="showCreateUserDialog = true">Create User</el-button>
-        <el-button v-if="isRoot" size="small" type="danger" icon="el-icon-key" @click="showCreateDialog = true">Create Admin</el-button>
+        <el-button v-if="activeTab === 'users'" size="small" type="success" icon="el-icon-user" @click="showCreateUserDialog = true">Create User</el-button>
+        <el-button v-if="isRoot && activeTab === 'admins'" size="small" type="danger" icon="el-icon-key" @click="showCreateDialog = true">Create Admin</el-button>
       </div>
     </div>
 
@@ -59,89 +59,126 @@
       </span>
     </el-dialog>
 
-    <el-table
-      :key="tableKey"
-      v-loading="listLoading"
-      :data="users"
-      fit
-      highlight-current-row
-      class="clickable-table"
-      style="width: 100%;"
-      @row-click="row => goToDetails(row.id)"
-      @sort-change="sortChange"
-    >
-      <el-table-column label="First Name" min-width="150px">
-        <template slot-scope="{row}">
-          <span class="link-type">{{ row.secret ? 'Private' : row.firstName }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Last Name" min-width="150px">
-        <template slot-scope="{row}">
-          <span class="link-type">{{ row.secret ? 'Private' : row.lastName }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Email" min-width="200px">
-        <template slot-scope="{row}">
-          <span>{{ row.secret ? '—' : row.email }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column v-if="isRoot" label="Role" width="140px" align="center">
-        <template slot-scope="{row}">
-          <el-tag v-if="row.role && row.role.name === 'root'" type="danger" size="small">Root</el-tag>
-          <el-tag v-else-if="row.role && row.role.name === 'linkedAccount'" type="warning" size="small">Linked Account</el-tag>
-          <el-tag v-else type="primary" size="small">App User</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column v-if="!isLinkedAccount" label="Has Linked Account" width="170px" align="center">
-        <template slot-scope="{row}">
-          <template v-if="row.role && row.role.name === 'linkedAccount'">
-            <span>N/A</span>
-          </template>
-          <template v-else>
-            <el-tag v-if="row.hasActiveLinks" type="success" size="small">
-              <svg-icon icon-class="link" style="margin-right: 4px;" />
-              Linked
-            </el-tag>
-            <el-tag v-else type="info" size="small">No</el-tag>
-          </template>
-        </template>
-      </el-table-column>
-      <el-table-column label="SWAP" prop="swap" width="180px" align="center" sortable="custom">
-        <template slot-scope="{row}">
-          <template v-if="row.role && row.role.name === 'linkedAccount'">
-            <span>N/A</span>
-          </template>
-          <template v-else-if="isLinkedAccount">
-            <span>{{ row.swapsCount }} ({{ row.sharedSwapsCount }} shared)</span>
-          </template>
-          <template v-else>
-            <span>{{ row.swapsCount }}</span>
-          </template>
-        </template>
-      </el-table-column>
-      <el-table-column label="Emotional Cycles" prop="emotionCycle" width="220px" align="center" sortable="custom">
-        <template slot-scope="{row}">
-          <template v-if="row.role && row.role.name === 'linkedAccount'">
-            <span>N/A</span>
-          </template>
-          <template v-else-if="isLinkedAccount">
-            <span>{{ row.emotionCyclesCount }} ({{ row.sharedEmotionCyclesCount }} shared)</span>
-          </template>
-          <template v-else>
-            <span>{{ row.emotionCyclesCount }}</span>
-          </template>
-        </template>
-      </el-table-column>
-      <el-table-column v-if="isLinkedAccount" label="Action" align="center" width="120" class-name="small-padding fixed-width">
-        <template slot-scope="{row}">
-          <el-button type="danger" size="mini" @click.stop="handleUnlink(row.id, row.linkedAccountId)">
-            Unlink
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <el-tabs v-model="activeTab" @tab-click="handleTabChange">
+      <el-tab-pane label="Users" name="users">
+        <el-table
+          :key="tableKey"
+          v-loading="listLoading"
+          :data="users"
+          fit
+          highlight-current-row
+          class="clickable-table"
+          style="width: 100%;"
+          @row-click="row => goToDetails(row.id)"
+          @sort-change="sortChange"
+        >
+          <el-table-column label="First Name" min-width="150px">
+            <template slot-scope="{row}">
+              <span class="link-type">{{ row.secret ? 'Private' : row.firstName }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="Last Name" min-width="150px">
+            <template slot-scope="{row}">
+              <span class="link-type">{{ row.secret ? 'Private' : row.lastName }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="Email" min-width="200px">
+            <template slot-scope="{row}">
+              <span>{{ row.secret ? '—' : row.email }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column v-if="isRoot" label="Role" width="140px" align="center">
+            <template slot-scope="{row}">
+              <el-tag v-if="row.role && row.role.name === 'root'" type="danger" size="small">Root</el-tag>
+              <el-tag v-else-if="row.role && row.role.name === 'linkedAccount'" type="warning" size="small">Linked Account</el-tag>
+              <el-tag v-else type="primary" size="small">App User</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column v-if="!isLinkedAccount" label="Has Linked Account" width="170px" align="center">
+            <template slot-scope="{row}">
+              <template v-if="row.role && row.role.name === 'linkedAccount'">
+                <span>N/A</span>
+              </template>
+              <template v-else>
+                <el-tag v-if="row.hasActiveLinks" type="success" size="small">
+                  <svg-icon icon-class="link" style="margin-right: 4px;" />
+                  Linked
+                </el-tag>
+                <el-tag v-else type="info" size="small">No</el-tag>
+              </template>
+            </template>
+          </el-table-column>
+          <el-table-column label="SWAP" prop="swap" width="180px" align="center" sortable="custom">
+            <template slot-scope="{row}">
+              <template v-if="row.role && row.role.name === 'linkedAccount'">
+                <span>N/A</span>
+              </template>
+              <template v-else-if="isLinkedAccount">
+                <span>{{ row.swapsCount }} ({{ row.sharedSwapsCount }} shared)</span>
+              </template>
+              <template v-else>
+                <span>{{ row.swapsCount }}</span>
+              </template>
+            </template>
+          </el-table-column>
+          <el-table-column label="Emotional Cycles" prop="emotionCycle" width="220px" align="center" sortable="custom">
+            <template slot-scope="{row}">
+              <template v-if="row.role && row.role.name === 'linkedAccount'">
+                <span>N/A</span>
+              </template>
+              <template v-else-if="isLinkedAccount">
+                <span>{{ row.emotionCyclesCount }} ({{ row.sharedEmotionCyclesCount }} shared)</span>
+              </template>
+              <template v-else>
+                <span>{{ row.emotionCyclesCount }}</span>
+              </template>
+            </template>
+          </el-table-column>
+          <el-table-column v-if="isLinkedAccount" label="Action" align="center" width="120" class-name="small-padding fixed-width">
+            <template slot-scope="{row}">
+              <el-button type="danger" size="mini" @click.stop="handleUnlink(row.id, row.linkedAccountId)">Unlink</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getUsers" />
+      </el-tab-pane>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getUsers" />
+      <el-tab-pane v-if="isRoot" label="Admins" name="admins">
+        <el-table
+          v-loading="adminLoading"
+          :data="adminList"
+          fit
+          highlight-current-row
+          style="width: 100%;"
+        >
+          <el-table-column label="First Name" min-width="150px">
+            <template slot-scope="{row}">{{ row.firstName }}</template>
+          </el-table-column>
+          <el-table-column label="Last Name" min-width="150px">
+            <template slot-scope="{row}">{{ row.lastName }}</template>
+          </el-table-column>
+          <el-table-column label="Email" min-width="200px">
+            <template slot-scope="{row}">{{ row.email }}</template>
+          </el-table-column>
+          <el-table-column label="Actions" align="center" width="220">
+            <template slot-scope="{row}">
+              <el-button size="mini" icon="el-icon-lock" @click="openResetAdmin(row)">Reset Password</el-button>
+              <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleDeleteAdmin(row)">Delete</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
+    </el-tabs>
+
+    <!-- Reset Admin Password Dialog -->
+    <el-dialog title="Reset Password" :visible.sync="showResetAdminDialog" width="380px">
+      <p style="margin:0 0 8px;color:#606266;font-size:13px;">Send a password reset email to:</p>
+      <p style="margin:0;font-weight:600;font-size:14px;color:#1a202c;">{{ resetAdminEmail }}</p>
+      <span slot="footer">
+        <el-button size="small" @click="showResetAdminDialog = false">Cancel</el-button>
+        <el-button size="small" type="primary" :loading="resetAdminLoading" @click="handleResetAdmin">Send Email</el-button>
+      </span>
+    </el-dialog>
 
   </div>
 </template>
@@ -178,6 +215,12 @@ export default {
         { label: 'Emotional Cycles Ascending', key: 'emotionCyclesCount asc' },
         { label: 'Emotional Cycles Descending', key: 'emotionCyclesCount desc' }
       ],
+      activeTab: 'users',
+      adminList: [],
+      adminLoading: false,
+      showResetAdminDialog: false,
+      resetAdminEmail: '',
+      resetAdminLoading: false,
       downloadLoading: false,
       showCreateUserDialog: false,
       createUserLoading: false,
@@ -274,7 +317,52 @@ export default {
     handleFilter () {
       this.listQuery.page = 1
       this.listQuery.start = 0
-      this.getUsers()
+      if (this.activeTab === 'admins') {
+        this.getAdmins()
+      } else {
+        this.getUsers()
+      }
+    },
+    handleTabChange (tab) {
+      if (tab.name === 'admins' && !this.adminList.length) this.getAdmins()
+    },
+    getAdmins () {
+      this.adminLoading = true
+      userService.queryUsers({ role: 'root', firstName: this.listQuery.firstName, lastName: this.listQuery.lastName })
+        .then(admins => { this.adminList = admins })
+        .finally(() => { this.adminLoading = false })
+    },
+    openResetAdmin (row) {
+      this.resetAdminEmail = row.email
+      this.showResetAdminDialog = true
+    },
+    handleResetAdmin () {
+      this.resetAdminLoading = true
+      userService.resetPassword(this.resetAdminEmail)
+        .then(() => {
+          this.$message.success('Password reset email sent')
+          this.showResetAdminDialog = false
+        })
+        .catch(err => {
+          this.$message.error((err && err.detail) || 'Error sending reset email')
+        })
+        .finally(() => { this.resetAdminLoading = false })
+    },
+    handleDeleteAdmin (row) {
+      const name = `${row.firstName} ${row.lastName}`
+      this.$confirm(
+        `This will permanently delete the admin account for ${name}. Continue?`,
+        'Delete Admin',
+        { confirmButtonText: 'Yes, Delete', cancelButtonText: 'Cancel', type: 'error' }
+      ).then(() => {
+        return userService.deleteUser(row.id)
+      }).then(() => {
+        this.$message.success('Admin deleted')
+        this.adminList = this.adminList.filter(a => a.id !== row.id)
+      }).catch(err => {
+        if (err === 'cancel') return
+        this.$message.error((err && err.detail) || 'Error deleting admin')
+      })
     },
     handleModifyStatus (row, status) {
       this.$message({
@@ -369,7 +457,8 @@ export default {
           .then(() => {
             this.$message.success('Admin user created successfully')
             this.showCreateDialog = false
-            this.getUsers()
+            this.activeTab = 'admins'
+            this.getAdmins()
           })
           .catch(err => {
             this.$message.error((err && err.detail) || 'Error creating user')
