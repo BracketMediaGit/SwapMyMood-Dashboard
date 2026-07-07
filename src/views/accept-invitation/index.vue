@@ -112,7 +112,7 @@
         <p v-else style="color: rgba(255,255,255,0.5);">No content available yet.</p>
       </div>
       <span slot="footer">
-        <el-button type="primary" aria-label="Close Terms & Conditions dialog" @click="showTermsDialog = false">Close</el-button>
+        <button class="el-button el-button--primary" aria-label="Close Terms & Conditions dialog" @click="showTermsDialog = false">Close</button>
       </span>
     </el-dialog>
 
@@ -129,7 +129,7 @@
         <p v-else style="color: rgba(255,255,255,0.5);">No content available yet.</p>
       </div>
       <span slot="footer">
-        <el-button type="primary" aria-label="Close Privacy Policy dialog" @click="showPrivacyDialog = false">Close</el-button>
+        <button class="el-button el-button--primary" aria-label="Close Privacy Policy dialog" @click="showPrivacyDialog = false">Close</button>
       </span>
     </el-dialog>
   </div>
@@ -417,13 +417,6 @@ $cursor: #fff;
 
   .el-dialog__footer {
     background: #2d3a4b;
-
-    .el-button--primary {
-      &:hover, &:focus {
-        background: #66b1ff;
-        border-color: #66b1ff;
-      }
-    }
   }
 
   .terms-dialog-content {

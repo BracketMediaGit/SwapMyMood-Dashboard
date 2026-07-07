@@ -250,3 +250,10 @@
 
   .el-tag { margin: 4px 6px 4px 0; }
 }
+
+.terms-dialog .el-dialog__footer .el-button--primary {
+  &:hover, &:focus {
+    background: #66b1ff;
+    border-color: #66b1ff;
+  }
+}
