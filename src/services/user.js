@@ -43,6 +43,9 @@ userService.createUser = (newUser) => _postUser({ role: 'root', ...toApiFields(n
 
 userService.createRegularUser = (newUser) => _postUser(toApiFields(newUser))
 
+userService.registerUser = ({ firstname, lastname, email, password, role }) =>
+  _postUser({ firstname, lastname, email, password, ...(role ? { role } : {}) })
+
 userService.resetPassword = (email) => {
   return api.post('/users/password', { email })
     .then(res => res.data)

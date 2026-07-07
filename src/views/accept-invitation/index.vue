@@ -310,7 +310,7 @@ export default {
 
         // Call user creation endpoint
         const userService = require('@/services/user').default
-        userService.createUser(newUser)
+        userService.registerUser(newUser)
           .then(() => {
             // After successful registration, log in
             return this.$store.dispatch('user/login', {
