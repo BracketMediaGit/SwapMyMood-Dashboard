@@ -242,6 +242,10 @@
   gap: 16px;
 }
 
+.terms-dialog .el-dialog__headerbtn:hover .el-dialog__close {
+  color: #fff !important;
+}
+
 .detail-card {
   background: #fff;
   border-radius: 10px;
@@ -251,8 +255,3 @@
   .el-tag { margin: 4px 6px 4px 0; }
 }
 
-.terms-dialog .el-dialog__footer .el-button--primary:hover,
-.terms-dialog .el-dialog__footer .el-button--primary:focus {
-  outline: 2px solid #fff !important;
-  outline-offset: 2px !important;
-}
