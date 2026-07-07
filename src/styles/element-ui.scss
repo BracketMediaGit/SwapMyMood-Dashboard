@@ -242,8 +242,10 @@
   gap: 16px;
 }
 
-.terms-dialog .el-dialog__headerbtn:hover .el-dialog__close {
-  color: #fff !important;
+.terms-dialog .el-dialog__headerbtn:hover,
+.terms-dialog .el-dialog__headerbtn:focus {
+  outline: 2px solid #fff !important;
+  outline-offset: 2px !important;
 }
 
 .detail-card {

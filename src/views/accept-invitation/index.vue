@@ -103,6 +103,7 @@
     <el-dialog
       title="Terms and Conditions"
       :visible.sync="showTermsDialog"
+      @open="$nextTick(() => { const b = $el.querySelector('.terms-dialog .el-dialog__headerbtn'); if(b) b.setAttribute('aria-label', 'Close Terms and Conditions dialog') })"
       width="80%"
       top="5vh"
       custom-class="terms-dialog"
@@ -123,6 +124,7 @@
       width="80%"
       top="5vh"
       custom-class="terms-dialog"
+      @open="$nextTick(() => { const b = $el.querySelector('.terms-dialog:not([style*=none]) .el-dialog__headerbtn'); if(b) b.setAttribute('aria-label', 'Close Privacy Policy dialog') })"
     >
       <div class="terms-dialog-content">
         <div v-if="privacyContent" v-html="privacyContent" />
