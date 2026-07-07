@@ -253,7 +253,6 @@
 
 .terms-dialog .el-dialog__footer .el-button--primary:hover,
 .terms-dialog .el-dialog__footer .el-button--primary:focus {
-  background: #fff !important;
-  border-color: #fff !important;
-  color: #409EFF !important;
+  outline: 2px solid #fff !important;
+  outline-offset: 2px !important;
 }
