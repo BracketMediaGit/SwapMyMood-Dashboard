@@ -45,9 +45,21 @@
         </el-form-item>
       </el-tooltip>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:16px;" @click.native.prevent="handleLogin">Login</el-button>
+
+      <div style="text-align:center;margin-bottom:30px;">
+        <span class="forgot-link" @click="showForgotDialog = true">I forgot my password</span>
+      </div>
 
     </el-form>
+
+    <el-dialog title="Reset Password" :visible.sync="showForgotDialog" width="400px" append-to-body custom-class="dark-dialog">
+      <el-input v-model="forgotEmail" placeholder="Enter your email" type="email" />
+      <span slot="footer">
+        <el-button @click="showForgotDialog = false">Cancel</el-button>
+        <el-button type="primary" :loading="forgotLoading" @click="handleForgotPassword">Send reset email</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -87,7 +99,10 @@ export default {
       showDialog: false,
       redirect: undefined,
       otherQuery: {},
-      logo
+      logo,
+      showForgotDialog: false,
+      forgotEmail: '',
+      forgotLoading: false
     }
   },
   watch: {
@@ -159,6 +174,24 @@ export default {
           this.loading = false
         })
     },
+    handleForgotPassword () {
+      if (!this.forgotEmail) {
+        this.$message.warning('Please enter your email')
+        return
+      }
+      this.forgotLoading = true
+      const userService = require('@/services/user').default
+      userService.resetPassword(this.forgotEmail)
+        .then(() => {
+          this.$message.success('Reset email sent. Check your inbox.')
+          this.showForgotDialog = false
+          this.forgotEmail = ''
+        })
+        .catch(err => {
+          this.$message.error(err.detail || err.message || 'Error sending reset email')
+        })
+        .finally(() => { this.forgotLoading = false })
+    },
     getOtherQuery (query) {
       return Object.keys(query).reduce((acc, cur) => {
         if (cur !== 'redirect') {
@@ -182,6 +215,26 @@ $cursor: #fff;
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
   .login-container .el-input input {
     color: $cursor;
+  }
+}
+
+.dark-dialog {
+  .el-dialog__header {
+    background: #2d3a4b;
+    .el-dialog__title { color: #eee; font-weight: bold; }
+    .el-dialog__headerbtn .el-dialog__close { color: #eee; }
+  }
+  .el-dialog__body {
+    background: #2d3a4b;
+    .el-input__inner {
+      background: rgba(0,0,0,0.2);
+      border-color: rgba(255,255,255,0.1);
+      color: #fff;
+      &::placeholder { color: rgba(255,255,255,0.4); }
+    }
+  }
+  .el-dialog__footer {
+    background: #2d3a4b;
   }
 }
 
@@ -280,6 +333,13 @@ $light_gray:#eee;
       text-align: center;
       font-weight: bold;
     }
+  }
+
+  .forgot-link {
+    color: $dark_gray;
+    font-size: 13px;
+    cursor: pointer;
+    &:hover { color: $light_gray; text-decoration: underline; }
   }
 
   .show-pwd {
