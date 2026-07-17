@@ -47,9 +47,15 @@ userService.registerUser = ({ firstname, lastname, email, password, role }) =>
   _postUser({ firstname, lastname, email, password, ...(role ? { role } : {}) })
 
 userService.resetPassword = (email) => {
-  return api.post('/users/password', { email })
-    .then(res => res.data)
-    .catch(err => { throw err.data })
+  const base = configService.apiUrl.replace(/\/$/, '')
+  return fetch(`${base}/users/password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  }).then(res => {
+    if (!res.ok) return res.json().then(e => Promise.reject(e))
+    return res.json()
+  })
 }
 
 userService.deleteUser = (id) => {
