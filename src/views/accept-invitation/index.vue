@@ -415,6 +415,8 @@ $cursor: #fff;
     background: #2d3a4b;
     max-height: 60vh;
     overflow-y: auto;
+    overflow-x: hidden;
+    word-break: break-word;
   }
 
   .el-dialog__footer {
