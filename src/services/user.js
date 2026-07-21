@@ -58,6 +58,18 @@ userService.resetPassword = (email) => {
   })
 }
 
+userService.confirmResetPassword = ({ token, newPassword }) => {
+  const base = configService.apiUrl.replace(/\/$/, '')
+  return fetch(`${base}/users/password/reset`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token, newPassword })
+  }).then(res => {
+    if (!res.ok) return res.json().then(e => Promise.reject(e))
+    return res.json()
+  })
+}
+
 userService.deleteUser = (id) => {
   const base = configService.apiUrl.replace(/\/$/, '')
   const token = getToken()

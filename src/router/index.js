@@ -55,6 +55,11 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/reset-password-confirm',
+    component: () => import('@/views/reset-password-confirm/index'),
+    hidden: true
+  },
+  {
     path: '/terms-and-conditions',
     component: () => import('@/views/terms-and-conditions/index'),
     hidden: true
