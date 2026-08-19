@@ -42,7 +42,7 @@
           <span>{{ row.secret ? 'Private' : row.lastName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Session" width="100px" align="center">
+      <el-table-column label="Session Length" width="130px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.session | parseSession }}</span>
         </template>
@@ -311,7 +311,7 @@ export default {
     handleDownload () {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['Date', 'Time', 'First Name', 'Last Name', 'Session', 'Problem', 'Satisfied?', 'Emotional Cycle', 'Alternatives', 'Are you Satisfied?', "Yes, I'm Satisfied", 'Notes']
+        const tHeader = ['Date', 'Time', 'First Name', 'Last Name', 'Session Length', 'Problem', 'Satisfied?', 'Emotional Cycle', 'Alternatives', 'Are you Satisfied?', "Yes, I'm Satisfied", 'Notes']
         const filterVal = ['date', 'time', 'firstName', 'lastName', 'session', 'problem', 'satisfied', 'emotionCycle', 'alternatives', 'satisfactionLevel', 'satisfaction', 'notes']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({

@@ -170,7 +170,14 @@ export default {
             this.loading = false
           }
         })
-        .catch(() => {
+        .catch(err => {
+          // Errors from the underlying HTTP call (wrong password, etc.) already show a
+          // message via the api.js response interceptor. This only covers rejections raised
+          // after a successful HTTP response (e.g. the account has no dashboard access),
+          // which would otherwise fail silently - the screen just stops loading with no explanation.
+          if (err && err.detail && !err.status) {
+            this.$message.error(err.detail)
+          }
           this.loading = false
         })
     },

@@ -42,9 +42,20 @@
           <span>{{ row.secret ? 'Private' : row.lastName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Session" width="100px" align="center">
+      <el-table-column label="Session Length" width="130px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.session | parseSession }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Triggers" min-width="160px">
+        <template slot-scope="{row}">
+          <span>{{ formatEcJson(row.triggers) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="SWAPS" prop="swap" width="110px" align="center">
+        <template slot-scope="{row}">
+          <el-tag v-if="row.swap" type="success" size="small">Yes</el-tag>
+          <el-tag v-else type="info" size="small">No</el-tag>
         </template>
       </el-table-column>
     </el-table>
@@ -256,8 +267,8 @@ export default {
     handleDownload () {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['Date', 'Time', 'First Name', 'Last Name', 'Session', 'Triggers', 'Emotions', 'Head, Face, Throat, Neck Sensations', 'Chest, Heart, Breathing Sensations', 'Abdomen Sensations', 'Arm Sensations', 'Leg Sensations', 'Whole Body Sensations', 'Thoughts', 'Behaviors']
-        const filterVal = ['date', 'time', 'firstName', 'lastName', 'session', 'trigger', 'emotion', 'head', 'chest', 'abdomen', 'arm', 'leg', 'wholebody', 'thought', 'behavior']
+        const tHeader = ['Date', 'Time', 'First Name', 'Last Name', 'Session Length', 'Triggers', 'SWAPS', 'Emotions', 'Sensations', 'Thoughts', 'Behaviors']
+        const filterVal = ['date', 'time', 'firstName', 'lastName', 'session', 'trigger', 'swap', 'emotion', 'sensations', 'thought', 'behavior']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
           header: tHeader,
@@ -275,13 +286,9 @@ export default {
         if (j === 'time') return parseTime(new Date(v.createdAt))
         if (j === 'session') return parseSession(v.session)
         if (j === 'trigger') return this.formatEcJson(v.triggers)
+        if (j === 'swap') return v.swap ? 'YES' : 'NO'
         if (j === 'emotion') return this.formatEcJson(v.emotions)
-        if (j === 'head') return this.formatEcJson(v.sensations && v.sensations.head)
-        if (j === 'chest') return this.formatEcJson(v.sensations && v.sensations.chest)
-        if (j === 'abdomen') return this.formatEcJson(v.sensations && v.sensations.abdomen)
-        if (j === 'arm') return this.formatEcJson(v.sensations && v.sensations.arm)
-        if (j === 'leg') return this.formatEcJson(v.sensations && v.sensations.leg)
-        if (j === 'wholebody') return this.formatEcJson(v.sensations && v.sensations.wholebody)
+        if (j === 'sensations') return this.formatSensations(v.sensations)
         if (j === 'thought') return this.formatEcJson(v.thoughts)
         if (j === 'behavior') return this.formatEcJson(v.behaviors)
         return v[j]
@@ -290,6 +297,18 @@ export default {
     formatEcJson (filterVal) {
       if (filterVal && filterVal.length) return filterVal.map(v => v.name).join(', ')
       return ''
+    },
+    formatSensations (sensations) {
+      if (!sensations) return ''
+      const zoneLabels = { head: 'head', chest: 'chest', abdomen: 'abdomen', arm: 'arm', leg: 'leg', wholebody: 'whole body' }
+      const items = []
+      Object.keys(zoneLabels).forEach(zone => {
+        const zoneItems = sensations[zone]
+        if (zoneItems && zoneItems.length) {
+          zoneItems.forEach(s => items.push(`${s.name} (${zoneLabels[zone]})`))
+        }
+      })
+      return items.join(', ')
     },
     sortChange (data) {
       const { prop, order } = data

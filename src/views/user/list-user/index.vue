@@ -108,7 +108,7 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column label="SWAP" prop="swap" width="180px" align="center" sortable="custom">
+          <el-table-column label="SWAPS" prop="swap" width="180px" align="center" sortable="custom">
             <template slot-scope="{row}">
               <template v-if="row.role && row.role.name === 'linkedAccount'">
                 <span>N/A</span>
