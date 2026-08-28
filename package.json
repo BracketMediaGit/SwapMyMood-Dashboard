@@ -1,7 +1,7 @@
 {
   "name": "vue-element-admin",
   "version": "1.0.0",
-  "description": "Swap my mood dashboard based on panjiachen vue admin",
+  "description": "SwapMyMood dashboard based on panjiachen vue admin",
   "author": "Pan <panfree23@gmail.com>",
   "license": "MIT",
   "scripts": {
