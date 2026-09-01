@@ -88,12 +88,26 @@ export default {
           this.$loading().close()
         })
     },
+    formatSensations (sensations) {
+      if (!sensations) return ''
+      const zoneLabels = { head: 'head', face: 'face', chest: 'chest', abdomen: 'abdomen', arm: 'arm', leg: 'leg', wholebody: 'whole body' }
+      // Recorre las zonas conocidas en orden y después cualquier otra que traiga el dato,
+      // para no perder sensaciones de zonas viejas que ya no usa la app.
+      const zones = [...Object.keys(zoneLabels), ...Object.keys(sensations).filter(z => !(z in zoneLabels))]
+      const items = []
+      zones.forEach(zone => {
+        const zoneItems = sensations[zone]
+        if (zoneItems && zoneItems.length) {
+          zoneItems.forEach(s => items.push(`${String(s.name).trim()} (${zoneLabels[zone] || zone})`))
+        }
+      })
+      return items.join(', ')
+    },
     handleDownload () {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['Date', 'Time', 'First Name', 'Last Name', 'Session', 'Triggers', 'Emotions', 'Head/Face/Throat/Neck', 'Chest/Heart/Breathing', 'Abdomen', 'Arms', 'Legs', 'Whole Body', 'Thoughts', 'Behaviors']
+        const tHeader = ['Date', 'Time', 'First Name', 'Last Name', 'Session', 'Triggers', 'Emotions', 'Sensations', 'Thoughts', 'Behaviors']
         const fmt = arr => arr && arr.length ? arr.map(v => v.name).join(', ') : ''
-        const s = this.emotionCycle.sensations || {}
         excel.export_json_to_excel({
           header: tHeader,
           data: [[
@@ -104,7 +118,7 @@ export default {
             parseSession(this.emotionCycle.session),
             fmt(this.emotionCycle.triggers),
             fmt(this.emotionCycle.emotions),
-            fmt(s.head), fmt(s.chest), fmt(s.abdomen), fmt(s.arm), fmt(s.leg), fmt(s.wholebody),
+            this.formatSensations(this.emotionCycle.sensations),
             fmt(this.emotionCycle.thoughts),
             fmt(this.emotionCycle.behaviors)
           ]],

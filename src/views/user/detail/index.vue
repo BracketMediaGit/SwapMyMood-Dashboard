@@ -266,9 +266,9 @@ export default {
         userService.getUserDetailsById(id)
       ]).then(([excel, freshData]) => {
         const swapHeader = ['Id', 'First Name', 'Last Name', 'Date', 'Time', 'Session', 'Problem', 'Alternatives', 'Are you Satisfied?', "Yes, I'm Satisfied", 'Notes', 'Emotional Cycle']
-        const emotionCycleHeader = ['Id', 'First Name', 'Last Name', 'Date', 'Time', 'Session', 'Triggers', 'Emotions', 'Head, Face, Throat, Neck Sensations', 'Chest, Heart, Breathing Sensations', 'Abdomen Sensations', 'Arm Sensations', 'Leg Sensations', 'Whole Body Sensations', 'Thoughts', 'Behaviors']
+        const emotionCycleHeader = ['Id', 'First Name', 'Last Name', 'Date', 'Time', 'Session', 'Triggers', 'Emotions', 'Sensations', 'Thoughts', 'Behaviors']
         const filterSwapVal = ['id', 'firstName', 'lastName', 'date', 'time', 'session', 'problem', 'alternatives', 'satisfactionLevel', 'satisfaction', 'notes', 'emotionCycle']
-        const filterEcVal = ['id', 'firstName', 'lastName', 'date', 'time', 'session', 'trigger', 'emotion', 'head', 'chest', 'abdomen', 'arm', 'leg', 'wholebody', 'thought', 'behavior']
+        const filterEcVal = ['id', 'firstName', 'lastName', 'date', 'time', 'session', 'trigger', 'emotion', 'sensations', 'thought', 'behavior']
         const swaps = this.formatSwapJson(filterSwapVal, freshData.swaps)
         const ecs = this.formatEc(filterEcVal, freshData.emotionCycles)
         excel.export_multiple_json_to_excel({
@@ -313,15 +313,25 @@ export default {
         if (j === 'session') return parseSession(v.session)
         if (j === 'trigger') return this.formatEcJson(v.triggers)
         if (j === 'emotion') return this.formatEcJson(v.emotions)
-        if (j === 'head') return this.formatEcJson(v.sensations.head)
-        if (j === 'chest') return this.formatEcJson(v.sensations.chest)
-        if (j === 'abdomen') return this.formatEcJson(v.sensations.abdomen)
-        if (j === 'arm') return this.formatEcJson(v.sensations.arm)
-        if (j === 'leg') return this.formatEcJson(v.sensations.leg)
-        if (j === 'wholebody') return this.formatEcJson(v.sensations.wholebody)
+        if (j === 'sensations') return this.formatSensations(v.sensations)
         if (j === 'thought') return this.formatEcJson(v.thoughts)
         if (j === 'behavior') return this.formatEcJson(v.behaviors)
       }))
+    },
+    formatSensations (sensations) {
+      if (!sensations) return ''
+      const zoneLabels = { head: 'head', face: 'face', chest: 'chest', abdomen: 'abdomen', arm: 'arm', leg: 'leg', wholebody: 'whole body' }
+      // Recorre las zonas conocidas en orden y después cualquier otra que traiga el dato,
+      // para no perder sensaciones de zonas viejas que ya no usa la app.
+      const zones = [...Object.keys(zoneLabels), ...Object.keys(sensations).filter(z => !(z in zoneLabels))]
+      const items = []
+      zones.forEach(zone => {
+        const zoneItems = sensations[zone]
+        if (zoneItems && zoneItems.length) {
+          zoneItems.forEach(s => items.push(`${String(s.name).trim()} (${zoneLabels[zone] || zone})`))
+        }
+      })
+      return items.join(', ')
     },
     formatEcJson (filterVal) {
       if (filterVal && filterVal.length) return filterVal.map(v => v.name)

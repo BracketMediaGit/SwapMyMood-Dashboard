@@ -300,12 +300,15 @@ export default {
     },
     formatSensations (sensations) {
       if (!sensations) return ''
-      const zoneLabels = { head: 'head', chest: 'chest', abdomen: 'abdomen', arm: 'arm', leg: 'leg', wholebody: 'whole body' }
+      const zoneLabels = { head: 'head', face: 'face', chest: 'chest', abdomen: 'abdomen', arm: 'arm', leg: 'leg', wholebody: 'whole body' }
+      // Recorre las zonas conocidas en orden y después cualquier otra que traiga el dato,
+      // para no perder sensaciones de zonas viejas que ya no usa la app.
+      const zones = [...Object.keys(zoneLabels), ...Object.keys(sensations).filter(z => !(z in zoneLabels))]
       const items = []
-      Object.keys(zoneLabels).forEach(zone => {
+      zones.forEach(zone => {
         const zoneItems = sensations[zone]
         if (zoneItems && zoneItems.length) {
-          zoneItems.forEach(s => items.push(`${s.name} (${zoneLabels[zone]})`))
+          zoneItems.forEach(s => items.push(`${String(s.name).trim()} (${zoneLabels[zone] || zone})`))
         }
       })
       return items.join(', ')
