@@ -290,11 +290,15 @@ export default {
         if (j === 'date') return parseDate(new Date(v.createdAt))
         if (j === 'time') return parseTime(new Date(v.createdAt))
         if (j === 'session') return parseSession(v.session)
-        if (j === 'problem') return v.problem.name
-        if (j === 'alternatives') return v.alternatives.map(a => a.name)
-        if (j === 'satisfactionLevel') return v.satisfactionLevels.find(s => s.selected).name
-        if (j === 'satisfaction') return v.satisfactions.filter(s => s.selected).map(s => s.name)
-        if (j === 'notes') return v.notes.map(n => n.name)
+        if (j === 'problem') return v.problem ? v.problem.name : ''
+        if (j === 'alternatives') return (v.alternatives || []).filter(a => a).map(a => a.name)
+        if (j === 'satisfactionLevel') {
+          // Un SWAP incompleto no tiene ningún satisfactionLevel seleccionado: celda vacía, no error.
+          const selected = (v.satisfactionLevels || []).find(s => s && s.selected)
+          return selected ? selected.name : ''
+        }
+        if (j === 'satisfaction') return (v.satisfactions || []).filter(s => s && s.selected).map(s => s.name)
+        if (j === 'notes') return (v.notes || []).filter(n => n).map(n => n.name)
         if (j === 'emotionCycle') {
           if (v[j]) return 'YES'
           return 'NO'
