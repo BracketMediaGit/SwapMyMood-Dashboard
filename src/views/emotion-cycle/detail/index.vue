@@ -42,6 +42,12 @@
         <p class="sd-label">Behaviors</p>
         <el-tag v-for="b in emotionCycle.behaviors" :key="b.id" size="medium" type="info">{{ b.name }}</el-tag>
       </div>
+
+      <div v-if="emotionCycle.swapId" class="detail-card">
+        <p class="sd-label">SWAPS</p>
+        <el-tag size="medium" type="success">Part of a SWAPS</el-tag>
+        <swap-summary :id="emotionCycle.swapId" />
+      </div>
     </div>
 
   </div>
@@ -51,9 +57,11 @@
 import emotionCycleService from '@/services/emotionCycle'
 import waves from '@/directive/waves'
 import { parseTime, parseDate, parseSession } from '@/utils'
+import SwapSummary from '@/components/SwapSummary'
 
 export default {
   name: 'EmotionCycleDetail',
+  components: { SwapSummary },
   directives: { waves },
   filters: {
     sensationLabel (zone) {

@@ -110,6 +110,13 @@
           <p class="sd-label">Behaviors</p>
           <el-tag v-for="b in drawerData.behaviors" :key="b.id" size="medium" type="info">{{ b.name }}</el-tag>
         </div>
+
+        <div v-if="drawerData.swapId" class="sd-section">
+          <p class="sd-label">SWAPS</p>
+          <el-tag size="medium" type="success">Part of a SWAPS</el-tag>
+          <el-button type="text" size="mini" icon="el-icon-top-right" @click="$router.push(`/swap/detail/${drawerData.swapId}`)">View SWAPS</el-button>
+          <swap-summary :id="drawerData.swapId" />
+        </div>
       </div>
     </el-drawer>
   </div>
@@ -123,10 +130,11 @@ import waves from '@/directive/waves' // waves directive
 import { parseTime, parseDate, parseSession } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import DatePicker from '@/components/DatePicker'
+import SwapSummary from '@/components/SwapSummary'
 
 export default {
   name: 'EmotionCycles',
-  components: { Pagination, DatePicker },
+  components: { Pagination, DatePicker, SwapSummary },
   directives: { waves },
   data () {
     return {
