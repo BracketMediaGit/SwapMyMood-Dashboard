@@ -11,7 +11,7 @@
         {{ emotionCycle.secret ? 'Private User' : `${emotionCycle.firstName} ${emotionCycle.lastName}` }}
       </div>
       <div class="detail-header__meta">
-        {{ new Date(emotionCycle.createdAt) | parseDate }} · {{ new Date(emotionCycle.createdAt) | parseTime }} · Session {{ emotionCycle.session }}
+        {{ new Date(emotionCycle.createdAt) | parseDate }} · {{ new Date(emotionCycle.createdAt) | parseTime }} · Session Length {{ emotionCycle.session | parseSessionLength }}
       </div>
     </div>
 

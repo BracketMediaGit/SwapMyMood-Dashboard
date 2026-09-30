@@ -81,7 +81,7 @@
         <div class="sd-header__info">
           <span class="sd-header__name">{{ drawerTitle }}</span>
           <span v-if="drawerData" class="sd-header__meta">
-            {{ new Date(drawerData.createdAt) | parseDate }} · {{ new Date(drawerData.createdAt) | parseTime }} · Session {{ drawerData.session }}
+            {{ new Date(drawerData.createdAt) | parseDate }} · {{ new Date(drawerData.createdAt) | parseTime }} · Session Length {{ drawerData.session | parseSessionLength }}
           </span>
         </div>
         <el-button v-if="drawerItemId" size="mini" plain icon="el-icon-top-right" @click="goToDetails(drawerItemId)">Full page</el-button>

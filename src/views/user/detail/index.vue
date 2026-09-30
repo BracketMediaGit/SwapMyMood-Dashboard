@@ -265,9 +265,10 @@ export default {
         import('@/vendor/Export2Excel'),
         userService.getUserDetailsById(id)
       ]).then(([excel, freshData]) => {
-        const swapHeader = ['Id', 'First Name', 'Last Name', 'Date', 'Time', 'Session', 'Problem', 'Alternatives', 'Are you Satisfied?', "Yes, I'm Satisfied", 'Notes', 'Emotional Cycle']
+        // Same order as the SWAPS table on screen (Date, Time, Session, Problem, Emotional Cycle), then the extra columns
+        const swapHeader = ['Date', 'Time', 'Session Length', 'Problem', 'Emotional Cycle', 'Alternatives', 'Are you Satisfied?', "Yes, I'm Satisfied", 'Notes', 'First Name', 'Last Name', 'Id']
         const emotionCycleHeader = ['Id', 'First Name', 'Last Name', 'Date', 'Time', 'Session', 'Triggers', 'Emotions', 'Sensations', 'Thoughts', 'Behaviors']
-        const filterSwapVal = ['id', 'firstName', 'lastName', 'date', 'time', 'session', 'problem', 'alternatives', 'satisfactionLevel', 'satisfaction', 'notes', 'emotionCycle']
+        const filterSwapVal = ['date', 'time', 'session', 'problem', 'emotionCycle', 'alternatives', 'satisfactionLevel', 'satisfaction', 'notes', 'firstName', 'lastName', 'id']
         const filterEcVal = ['id', 'firstName', 'lastName', 'date', 'time', 'session', 'trigger', 'emotion', 'sensations', 'thought', 'behavior']
         const swaps = this.formatSwapJson(filterSwapVal, freshData.swaps)
         const ecs = this.formatEc(filterEcVal, freshData.emotionCycles)

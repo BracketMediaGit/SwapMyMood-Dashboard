@@ -1,6 +1,6 @@
 // import parseTime, formatTime and set to filter
 // import format from 'date-fns/format'
-export { parseDate, parseTime, parseDateTime, parseSession } from '@/utils'
+export { parseDate, parseTime, parseDateTime, parseSession, parseSessionLength } from '@/utils'
 
 // export function parseDate (date) {
 //   return format(date, 'M/d/yyyy')

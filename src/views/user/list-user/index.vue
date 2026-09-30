@@ -10,7 +10,7 @@
       <el-button v-waves size="small" class="filter-item" icon="el-icon-close" @click="clearFilter">Clear</el-button>
       <el-button v-if="activeTab === 'users'" v-waves size="small" class="filter-item" icon="el-icon-download" :loading="downloadLoading" @click="handleDownload">Export</el-button>
       <div class="filter-actions">
-        <el-button v-if="activeTab === 'users'" size="small" type="success" icon="el-icon-user" @click="showCreateUserDialog = true">Create User</el-button>
+        <el-button v-if="showCreateUser && activeTab === 'users'" size="small" type="success" icon="el-icon-user" @click="showCreateUserDialog = true">Create User</el-button>
         <el-button v-if="isRoot && activeTab === 'admins'" size="small" type="danger" icon="el-icon-key" @click="showCreateDialog = true">Create Admin</el-button>
       </div>
     </div>
@@ -263,6 +263,10 @@ export default {
     },
     isRoot () {
       return this.roles.includes('root')
+    },
+    // Hidden for the client (86bca2599); still available on local `npm run dev` for testing
+    showCreateUser () {
+      return process.env.NODE_ENV === 'development'
     }
   },
   created () {

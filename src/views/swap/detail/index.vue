@@ -11,7 +11,7 @@
         {{ swap.secret ? 'Private User' : `${swap.firstName} ${swap.lastName}` }}
       </div>
       <div class="detail-header__meta">
-        {{ new Date(swap.createdAt) | parseDate }} · {{ new Date(swap.createdAt) | parseTime }} · Session {{ swap.session }}
+        {{ new Date(swap.createdAt) | parseDate }} · {{ new Date(swap.createdAt) | parseTime }} · Session Length {{ swap.session | parseSessionLength }}
       </div>
     </div>
 

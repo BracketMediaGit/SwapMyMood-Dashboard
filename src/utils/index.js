@@ -21,6 +21,18 @@ export function parseSession (seconds) {
     return ''
   }
 }
+// "leila saleh" → "Leila Saleh", "o'brien-smith" → "O'Brien-Smith". Only uppercases the
+// first letter of each part; never lowercases, so a stored "McDonald" stays as is.
+// ponytail: the API stores names lowercased (users.js), so original casing is lost; this is display-only.
+export function capitalizeName (name) {
+  if (typeof name !== 'string') return name
+  return name.replace(/(^|[\s'-])([a-zà-ÿ])/g, (m, sep, c) => sep + c.toUpperCase())
+}
+// Seconds → "m:ss" (e.g. 105 → "1:45")
+export function parseSessionLength (seconds) {
+  const s = parseInt(seconds) || 0
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
+}
 /**
  * Parse the time to string
  * @param {(Object|string|number)} time
