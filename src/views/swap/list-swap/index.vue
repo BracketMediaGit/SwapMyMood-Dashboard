@@ -121,6 +121,8 @@
         <div v-if="drawerData.emotionCycle" class="sd-section">
           <p class="sd-label">Emotional Cycle</p>
           <el-tag size="medium" type="success">Has associated emotional cycle</el-tag>
+          <el-button type="text" size="mini" icon="el-icon-top-right" @click="goToEcDetail(drawerData.emotionCycle)">View cycle</el-button>
+          <emotion-cycle-summary :id="drawerData.emotionCycle" />
         </div>
       </div>
     </el-drawer>
@@ -135,10 +137,11 @@ import waves from '@/directive/waves' // waves directive
 import { parseTime, parseDate, parseSession } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import DatePicker from '@/components/DatePicker'
+import EmotionCycleSummary from '@/components/EmotionCycleSummary'
 
 export default {
   name: 'Swaps',
-  components: { Pagination, DatePicker },
+  components: { Pagination, DatePicker, EmotionCycleSummary },
   directives: { waves },
   data () {
     return {

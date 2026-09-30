@@ -46,6 +46,7 @@
         <el-tag size="medium" :type="swap.emotionCycle ? 'success' : 'info'">
           {{ swap.emotionCycle ? 'Associated' : 'None' }}
         </el-tag>
+        <emotion-cycle-summary v-if="swap.emotionCycle" :id="swap.emotionCycle" />
       </div>
     </div>
 
@@ -56,9 +57,11 @@
 import swapService from '@/services/swap'
 import waves from '@/directive/waves'
 import { parseTime, parseDate, parseSession } from '@/utils'
+import EmotionCycleSummary from '@/components/EmotionCycleSummary'
 
 export default {
   name: 'SwapDetail',
+  components: { EmotionCycleSummary },
   directives: { waves },
   data () {
     return {
