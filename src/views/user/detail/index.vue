@@ -266,7 +266,7 @@ export default {
         userService.getUserDetailsById(id)
       ]).then(([excel, freshData]) => {
         // Same order as the SWAPS table on screen (Date, Time, Session, Problem, Emotional Cycle), then the extra columns
-        const swapHeader = ['Date', 'Time', 'Session Length', 'Problem', 'Emotional Cycle', 'Alternatives', 'Are you Satisfied?', "Yes, I'm Satisfied", 'Notes', 'First Name', 'Last Name', 'Id']
+        const swapHeader = ['Date', 'Time', 'Session Length', 'Problem', 'Emotional Cycle', 'Plan', 'Are you Satisfied?', "Yes, I'm Satisfied", 'Notes', 'First Name', 'Last Name', 'Id']
         const emotionCycleHeader = ['Id', 'First Name', 'Last Name', 'Date', 'Time', 'Session', 'Triggers', 'Emotions', 'Sensations', 'Thoughts', 'Behaviors']
         const filterSwapVal = ['date', 'time', 'session', 'problem', 'emotionCycle', 'alternatives', 'satisfactionLevel', 'satisfaction', 'notes', 'firstName', 'lastName', 'id']
         const filterEcVal = ['id', 'firstName', 'lastName', 'date', 'time', 'session', 'trigger', 'emotion', 'sensations', 'thought', 'behavior']

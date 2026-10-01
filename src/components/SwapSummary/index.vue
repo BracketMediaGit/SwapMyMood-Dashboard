@@ -26,7 +26,7 @@ export default {
       const level = (this.swap.satisfactionLevels || []).find(s => s.selected)
       return [
         { label: 'Problem', items: this.swap.problem ? [this.swap.problem] : [], type: 'primary' },
-        { label: 'Alternatives', items: this.swap.alternatives, type: '' },
+        { label: 'Plan', items: this.swap.alternatives, type: '' },
         { label: 'Satisfaction', items: level ? [level] : [], type: 'warning' },
         { label: "I'm satisfied because", items: (this.swap.satisfactions || []).filter(s => s.selected), type: 'success' },
         { label: 'Notes', items: this.swap.notes, type: 'info' }

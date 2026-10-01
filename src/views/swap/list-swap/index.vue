@@ -97,7 +97,7 @@
         </div>
 
         <div v-if="drawerData.alternatives && drawerData.alternatives.length" class="sd-section">
-          <p class="sd-label">Alternatives</p>
+          <p class="sd-label">Plan</p>
           <el-tag v-for="a in drawerData.alternatives" :key="a.id" size="medium">{{ a.name }}</el-tag>
         </div>
 
@@ -314,7 +314,7 @@ export default {
     handleDownload () {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['Date', 'Time', 'First Name', 'Last Name', 'Session Length', 'Problem', 'Satisfied?', 'Emotional Cycle', 'Alternatives', 'Are you Satisfied?', "Yes, I'm Satisfied", 'Notes']
+        const tHeader = ['Date', 'Time', 'First Name', 'Last Name', 'Session Length', 'Problem', 'Satisfied?', 'Emotional Cycle', 'Plan', 'Are you Satisfied?', "Yes, I'm Satisfied", 'Notes']
         const filterVal = ['date', 'time', 'firstName', 'lastName', 'session', 'problem', 'satisfied', 'emotionCycle', 'alternatives', 'satisfactionLevel', 'satisfaction', 'notes']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({

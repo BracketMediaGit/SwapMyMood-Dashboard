@@ -22,7 +22,7 @@
       </div>
 
       <div v-if="swap.alternatives && swap.alternatives.length" class="detail-card">
-        <p class="sd-label">Alternatives</p>
+        <p class="sd-label">Plan</p>
         <el-tag v-for="alt in swap.alternatives" :key="alt.id" size="medium">{{ alt.name }}</el-tag>
       </div>
 
@@ -103,7 +103,7 @@ export default {
     handleDownload () {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['Date', 'Time', 'First Name', 'Last Name', 'Session', 'Problem', 'Satisfied?', 'Emotional Cycle', 'Alternatives', "Are you Satisfied?", "Yes, I'm Satisfied", 'Notes']
+        const tHeader = ['Date', 'Time', 'First Name', 'Last Name', 'Session', 'Problem', 'Satisfied?', 'Emotional Cycle', 'Plan', "Are you Satisfied?", "Yes, I'm Satisfied", 'Notes']
         excel.export_json_to_excel({
           header: tHeader,
           data: [[
