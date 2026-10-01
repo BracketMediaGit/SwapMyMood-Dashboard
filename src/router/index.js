@@ -112,6 +112,8 @@ export const constantRoutes = [
         path: 'create-user',
         component: () => import('@/views/user/create-user/index'),
         name: 'CreateUsers',
+        // Hidden from the menu for the client (86bca2599); still reachable at /user/create-user for testing
+        hidden: true,
         meta: { title: 'Create user', icon: 'user', affix: false, roles: ['root'] }
       },
       {
