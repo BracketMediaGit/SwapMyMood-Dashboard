@@ -1,61 +1,84 @@
 <template>
-  <el-date-picker
-    v-model="value"
-    class="datepicker"
-    type="daterange"
-    align="right"
-    unlink-panels
-    start-placeholder="Start date"
-    end-placeholder="End date"
-    :picker-options="pickerOptions"
-    v-on="$listeners"
-  />
+  <!-- Two separate fields instead of el-date-picker daterange, which users found confusing (86bcbqmht) -->
+  <div class="date-range">
+    <el-date-picker
+      v-model="start"
+      type="date"
+      size="small"
+      format="MM/dd/yyyy"
+      placeholder="Start date"
+      aria-label="Start date"
+      :picker-options="startOptions"
+      @change="emitChange"
+    />
+    <span class="date-range__sep">to</span>
+    <el-date-picker
+      v-model="end"
+      type="date"
+      size="small"
+      format="MM/dd/yyyy"
+      placeholder="End date"
+      aria-label="End date"
+      :picker-options="endOptions"
+      @change="emitChange"
+    />
+  </div>
 </template>
 
 <script>
 export default {
   data () {
     return {
-      pickerOptions: {
-        shortcuts: [{
-          text: 'Last week',
-          onClick (picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: 'Last month',
-          onClick (picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: 'Last 3 months',
-          onClick (picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          }
-        }]
-      },
-      value: ''
+      start: null,
+      end: null
+    }
+  },
+  computed: {
+    startOptions () {
+      return { disabledDate: d => !!this.end && d > this.end }
+    },
+    endOptions () {
+      return { disabledDate: d => !!this.start && d < this.start }
     }
   },
   created () {
     this.$parent.$on('clear', this.setValue)
   },
   methods: {
-    setValue (value) {
-      this.value = value
+    // Same contract as the old daterange: [start, end] when both are set, null when not.
+    // End is pushed to 23:59:59.999 so the end day itself is included.
+    emitChange () {
+      if (this.start && this.end) {
+        const end = new Date(this.end)
+        end.setHours(23, 59, 59, 999)
+        this.$emit('change', [this.start, end])
+      } else {
+        this.$emit('change', null)
+      }
+    },
+    setValue () {
+      this.start = null
+      this.end = null
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.date-range {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  .el-date-editor.el-input {
+    flex: 1;
+    width: auto;
+    min-width: 0;
+  }
+
+  &__sep {
+    font-size: 12px;
+    color: #8a94a6;
+  }
+}
 </style>
