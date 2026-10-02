@@ -28,6 +28,16 @@ export function capitalizeName (name) {
   if (typeof name !== 'string') return name
   return name.replace(/(^|[\s'-])([a-zà-ÿ])/g, (m, sep, c) => sep + c.toUpperCase())
 }
+// Selected satisfaction level → 'Yes' | 'No' | 'Maybe', or '' when none is selected (incomplete SWAP).
+// Matches on the first word: "Maybe, or I don't know yet" contains "no" and used to be read as No.
+export function satisfiedLabel (levels) {
+  const selected = (levels || []).find(l => l && l.selected)
+  if (!selected || !selected.name) return ''
+  const name = selected.name.trim().toLowerCase()
+  if (/^yes\b/.test(name)) return 'Yes'
+  if (/^no\b/.test(name)) return 'No'
+  return 'Maybe'
+}
 // Seconds → "m:ss" (e.g. 105 → "1:45")
 export function parseSessionLength (seconds) {
   const s = parseInt(seconds) || 0

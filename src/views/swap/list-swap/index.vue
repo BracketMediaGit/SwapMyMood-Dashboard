@@ -56,7 +56,8 @@
         <template slot-scope="{row}">
           <el-tag v-if="getSatisfied(row) === 'Yes'" type="success" size="small">Yes</el-tag>
           <el-tag v-else-if="getSatisfied(row) === 'No'" type="danger" size="small">No</el-tag>
-          <el-tag v-else type="warning" size="small">Maybe</el-tag>
+          <el-tag v-else-if="getSatisfied(row) === 'Maybe'" type="warning" size="small">Maybe</el-tag>
+          <span v-else>—</span>
         </template>
       </el-table-column>
       <el-table-column label="Emotional Cycle" prop="emotionCycle" width="140px" align="center">
@@ -103,7 +104,7 @@
 
         <div class="sd-section">
           <p class="sd-label">Satisfaction</p>
-          <el-tag size="medium" :type="drawerSatisfied === 'Yes' ? 'success' : drawerSatisfied === 'No' ? 'danger' : 'warning'">
+          <el-tag size="medium" :type="{ Yes: 'success', No: 'danger', Maybe: 'warning' }[drawerSatisfied] || 'info'">
             {{ drawerSatisfactionLevel }}
           </el-tag>
         </div>
@@ -134,7 +135,7 @@ import { mapMutations, mapGetters } from 'vuex'
 import swapService from '@/services/swap'
 import statisticsService from '@/services/statistics'
 import waves from '@/directive/waves' // waves directive
-import { parseTime, parseDate, parseSession } from '@/utils'
+import { parseTime, parseDate, parseSession, satisfiedLabel } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import DatePicker from '@/components/DatePicker'
 import EmotionCycleSummary from '@/components/EmotionCycleSummary'
@@ -178,14 +179,7 @@ export default {
       return this.drawerData.secret ? 'Private' : `${this.drawerData.firstName} ${this.drawerData.lastName}`
     },
     drawerSatisfied () {
-      if (!this.drawerData) return ''
-      if (!this.drawerData.satisfactionLevels) return 'Maybe'
-      const s = this.drawerData.satisfactionLevels.find(l => l.selected)
-      if (!s) return 'Maybe'
-      const n = s.name.toLowerCase()
-      if (n.includes('yes') || n.includes('satisfied')) return 'Yes'
-      if (n.includes('no') || n.includes('not')) return 'No'
-      return 'Maybe'
+      return this.drawerData ? satisfiedLabel(this.drawerData.satisfactionLevels) : ''
     },
     drawerSatisfactionLevel () {
       if (!this.drawerData || !this.drawerData.satisfactionLevels) return 'N/A'
@@ -314,8 +308,9 @@ export default {
     handleDownload () {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['Date', 'Time', 'First Name', 'Last Name', 'Session Length', 'Problem', 'Satisfied?', 'Emotional Cycle', 'Plan', 'Are you Satisfied?', "Yes, I'm Satisfied", 'Notes']
-        const filterVal = ['date', 'time', 'firstName', 'lastName', 'session', 'problem', 'satisfied', 'emotionCycle', 'alternatives', 'satisfactionLevel', 'satisfaction', 'notes']
+        // Same order as the table; "Are you Satisfied?" was dropped (duplicate of "Satisfied?")
+        const tHeader = ['Date', 'Time', 'First Name', 'Last Name', 'Session Length', 'Problem', 'Satisfied?', 'Emotional Cycle', 'Plan', "Yes, I'm Satisfied", 'Notes']
+        const filterVal = ['date', 'time', 'firstName', 'lastName', 'session', 'problem', 'satisfied', 'emotionCycle', 'alternatives', 'satisfaction', 'notes']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
           header: tHeader,
@@ -333,19 +328,12 @@ export default {
         if (j === 'time') return parseTime(new Date(v.createdAt))
         if (j === 'session') return parseSession(v.session)
         if (j === 'problem') return v.problem ? v.problem.name : ''
+        // Export keeps the level as the user picked it ("Maybe, or I don't know yet"); the table shows the short tag
         if (j === 'satisfied') {
-          if (this.getSatisfied(v) === 'Yes') return 'Yes'
-          if (this.getSatisfied(v) === 'No') return 'No'
-          return 'Maybe'
+          const selected = (v.satisfactionLevels || []).find(s => s && s.selected)
+          return selected ? selected.name : ''
         }
         if (j === 'alternatives') return v.alternatives ? v.alternatives.map(a => a.name).join(', ') : ''
-        if (j === 'satisfactionLevel') {
-          if (v.satisfactionLevels) {
-            const selected = v.satisfactionLevels.find(s => s.selected)
-            return selected ? selected.name : ''
-          }
-          return ''
-        }
         if (j === 'satisfaction') return v.satisfactions ? v.satisfactions.filter(s => s.selected).map(s => s.name).join(', ') : ''
         if (j === 'notes') return v.notes ? v.notes.map(n => n.name).join(', ') : ''
         if (j === 'emotionCycle') {
@@ -356,16 +344,7 @@ export default {
       }))
     },
     getSatisfied (row) {
-      if (row.satisfactionLevels && row.satisfactionLevels.length > 0) {
-        const selected = row.satisfactionLevels.find(level => level.selected)
-        if (selected) {
-          const name = selected.name.toLowerCase()
-          if (name.includes('yes') || name.includes('satisfied')) return 'Yes'
-          if (name.includes('no') || name.includes('not')) return 'No'
-          return 'Maybe'
-        }
-      }
-      return 'Maybe'
+      return satisfiedLabel(row.satisfactionLevels)
     }
   }
 }

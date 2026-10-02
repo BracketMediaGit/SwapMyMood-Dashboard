@@ -56,7 +56,7 @@
 <script>
 import swapService from '@/services/swap'
 import waves from '@/directive/waves'
-import { parseTime, parseDate, parseSession } from '@/utils'
+import { parseTime, parseDate, parseSession, satisfiedLabel } from '@/utils'
 import EmotionCycleSummary from '@/components/EmotionCycleSummary'
 
 export default {
@@ -80,11 +80,11 @@ export default {
       const selected = this.swap.satisfactionLevels.find(s => s.selected)
       return selected ? selected.name : 'N/A'
     },
+    satisfied () {
+      return satisfiedLabel(this.swap.satisfactionLevels)
+    },
     satisfiedType () {
-      const n = this.satisfactionLevel.toLowerCase()
-      if (n.includes('yes') || n.includes('satisfied')) return 'success'
-      if (n.includes('no') || n.includes('not')) return 'danger'
-      return 'warning'
+      return { Yes: 'success', No: 'danger', Maybe: 'warning' }[this.satisfied] || 'info'
     }
   },
   created () {
@@ -103,7 +103,8 @@ export default {
     handleDownload () {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['Date', 'Time', 'First Name', 'Last Name', 'Session', 'Problem', 'Satisfied?', 'Emotional Cycle', 'Plan', "Are you Satisfied?", "Yes, I'm Satisfied", 'Notes']
+        // Same columns as the List SWAPS export
+        const tHeader = ['Date', 'Time', 'First Name', 'Last Name', 'Session Length', 'Problem', 'Satisfied?', 'Emotional Cycle', 'Plan', "Yes, I'm Satisfied", 'Notes']
         excel.export_json_to_excel({
           header: tHeader,
           data: [[
@@ -113,10 +114,9 @@ export default {
             this.swap.secret ? 'Private' : this.swap.lastName,
             parseSession(this.swap.session),
             this.swap.problem ? this.swap.problem.name : '',
-            this.satisfactionLevel,
+            this.satisfied ? this.satisfactionLevel : '',
             this.swap.emotionCycle ? 'YES' : 'NO',
             this.swap.alternatives ? this.swap.alternatives.map(a => a.name).join(', ') : '',
-            this.satisfactionLevel,
             this.satisfaction.map(s => s.name).join(', '),
             this.swap.notes ? this.swap.notes.map(n => n.name).join(', ') : ''
           ]],
