@@ -8,6 +8,7 @@
       format="MM/dd/yyyy"
       placeholder="Start date"
       aria-label="Start date"
+      :default-value="end || undefined"
       :picker-options="startOptions"
       @change="emitChange"
     />
@@ -19,6 +20,7 @@
       format="MM/dd/yyyy"
       placeholder="End date"
       aria-label="End date"
+      :default-value="start || undefined"
       :picker-options="endOptions"
       @change="emitChange"
     />
@@ -45,16 +47,16 @@ export default {
     this.$parent.$on('clear', this.setValue)
   },
   methods: {
-    // Same contract as the old daterange: [start, end] when both are set, null when not.
+    // Same contract as the old daterange: [start, end], or null when both are empty.
+    // Only start → "from" (until end of today); only end → "until" (from the beginning).
     // End is pushed to 23:59:59.999 so the end day itself is included.
     emitChange () {
-      if (this.start && this.end) {
-        const end = new Date(this.end)
-        end.setHours(23, 59, 59, 999)
-        this.$emit('change', [this.start, end])
-      } else {
-        this.$emit('change', null)
-      }
+      if (!this.start && !this.end) return this.$emit('change', null)
+      // Not new Date(0): some views check `if (fromDate && toDate)` and 0 is falsy
+      const start = this.start || new Date(2000, 0, 1)
+      const end = new Date(this.end || Date.now())
+      end.setHours(23, 59, 59, 999)
+      this.$emit('change', [start, end])
     },
     setValue () {
       this.start = null
