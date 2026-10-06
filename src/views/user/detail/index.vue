@@ -301,8 +301,8 @@ export default {
         if (j === 'satisfaction') return (v.satisfactions || []).filter(s => s && s.selected).map(s => s.name)
         if (j === 'notes') return (v.notes || []).filter(n => n).map(n => n.name)
         if (j === 'emotionCycle') {
-          if (v[j]) return 'YES'
-          return 'NO'
+          if (v[j]) return 'Yes'
+          return 'No'
         }
         return v[j]
       }))

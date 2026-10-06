@@ -115,7 +115,7 @@ export default {
             parseSession(this.swap.session),
             this.swap.problem ? this.swap.problem.name : '',
             this.satisfied ? this.satisfactionLevel : '',
-            this.swap.emotionCycle ? 'YES' : 'NO',
+            this.swap.emotionCycle ? 'Yes' : 'No',
             this.swap.alternatives ? this.swap.alternatives.map(a => a.name).join(', ') : '',
             this.satisfaction.map(s => s.name).join(', '),
             this.swap.notes ? this.swap.notes.map(n => n.name).join(', ') : ''

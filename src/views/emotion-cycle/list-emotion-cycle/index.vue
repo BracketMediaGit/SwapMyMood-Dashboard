@@ -294,7 +294,7 @@ export default {
         if (j === 'time') return parseTime(new Date(v.createdAt))
         if (j === 'session') return parseSession(v.session)
         if (j === 'trigger') return this.formatEcJson(v.triggers)
-        if (j === 'swap') return v.swap ? 'YES' : 'NO'
+        if (j === 'swap') return v.swap ? 'Yes' : 'No'
         if (j === 'emotion') return this.formatEcJson(v.emotions)
         if (j === 'sensations') return this.formatSensations(v.sensations)
         if (j === 'thought') return this.formatEcJson(v.thoughts)

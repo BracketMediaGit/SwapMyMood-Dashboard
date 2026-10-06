@@ -337,8 +337,8 @@ export default {
         if (j === 'satisfaction') return v.satisfactions ? v.satisfactions.filter(s => s.selected).map(s => s.name).join(', ') : ''
         if (j === 'notes') return v.notes ? v.notes.map(n => n.name).join(', ') : ''
         if (j === 'emotionCycle') {
-          if (v[j]) return 'YES'
-          return 'NO'
+          if (v[j]) return 'Yes'
+          return 'No'
         }
         return v[j]
       }))
