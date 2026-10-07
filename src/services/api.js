@@ -71,4 +71,13 @@ const rejectMiddleware = function (err) {
 api.before(beforeMiddleware)
 api.after(fulfillMiddleware, rejectMiddleware)
 
+// List endpoints send the filtered total in X-Total-Count; expose it as `list.total`
+// (null when the API doesn't send it) so pagination isn't capped at one page (86bcbqmht)
+export const withTotal = res => {
+  const list = res.data
+  const total = res.headers && res.headers.get('X-Total-Count')
+  list.total = total === null || total === undefined ? null : Number(total)
+  return list
+}
+
 export default api

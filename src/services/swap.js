@@ -1,10 +1,10 @@
-import api from './api'
+import api, { withTotal } from './api'
 
 const swapService = {}
 
 swapService.querySwaps = (params = {}) => {
   return api.get('/swaps', { params })
-    .then(res => res.data)
+    .then(withTotal)
     .catch(err => { throw err.data })
 }
 

@@ -1,4 +1,4 @@
-import api from './api'
+import api, { withTotal } from './api'
 
 const surveyService = {}
 
@@ -39,7 +39,7 @@ surveyService.updateTemplate = (id, statements) => {
 
 surveyService.getSurveys = (params = {}) => {
   return api.get('/surveys', { params })
-    .then(res => res.data)
+    .then(withTotal)
     .catch(err => { throw err.data })
 }
 

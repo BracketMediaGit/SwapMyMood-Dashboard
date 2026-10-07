@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "api-dev",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "cd '/Users/meli/Local Sites/SwapMyMood-API/functions' && FUNCTIONS_DISCOVERY_TIMEOUT=60 npm run serve:dev"],
+      "port": 5001
+    },
+    {
+      "name": "dashboard-local-api",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "VUE_APP_API_URL=http://127.0.0.1:5001/swapmymooddev/us-central1/app npm run dev"],
+      "port": 9527
+    }
+  ]
+}

@@ -171,7 +171,10 @@ export default {
       surveyService.getSurveys(this.listQuery)
         .then(surveys => {
           this['survey/SET_SURVEYS'](surveys)
-          if (this.activeFilter) {
+          // Filtered total from the API (X-Total-Count); fallback for an API without it
+          if (surveys.total !== null && surveys.total !== undefined) {
+            this.total = surveys.total
+          } else if (this.activeFilter) {
             this.total = surveys.length
           } else {
             this.total = this.statistics.surveysCount

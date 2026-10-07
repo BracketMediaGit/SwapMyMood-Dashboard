@@ -1,10 +1,10 @@
-import api from './api'
+import api, { withTotal } from './api'
 
 const emotionCycleService = {}
 
 emotionCycleService.getEmotionCycles = (params = {}) => {
   return api.get('/emotioncycles', { params })
-    .then(res => res.data)
+    .then(withTotal)
     .catch(err => { throw err })
 }
 

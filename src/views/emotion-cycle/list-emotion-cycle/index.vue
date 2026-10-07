@@ -245,7 +245,10 @@ export default {
       emotionCycleService.getEmotionCycles(this.listQuery)
         .then(ec => {
           this['emotionCycle/SET_EC'](ec)
-          if (this.activeFilter) {
+          // Filtered total from the API (X-Total-Count); fallback for an API without it
+          if (ec.total !== null && ec.total !== undefined) {
+            this.total = ec.total
+          } else if (this.activeFilter) {
             this.total = ec.length
           } else {
             this.total = this.statistics.emotionCyclesCount

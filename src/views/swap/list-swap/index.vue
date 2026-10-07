@@ -257,7 +257,10 @@ export default {
       swapService.querySwaps(this.listQuery)
         .then(swaps => {
           this['swap/SET_SWAPS'](swaps)
-          if (this.activeFilter) {
+          // Filtered total from the API (X-Total-Count); fallback for an API without it
+          if (swaps.total !== null && swaps.total !== undefined) {
+            this.total = swaps.total
+          } else if (this.activeFilter) {
             this.total = swaps.length
           } else {
             this.total = this.statistics.swapsCount
