@@ -4,7 +4,7 @@
     {
       "name": "api-dev",
       "runtimeExecutable": "bash",
-      "runtimeArgs": ["-c", "cd '/Users/meli/Local Sites/SwapMyMood-API/functions' && FUNCTIONS_DISCOVERY_TIMEOUT=60 npm run serve:dev"],
+      "runtimeArgs": ["-c", "cd '/Users/meli/Local Sites/SwapMyMood-API/functions' && PATH=\"$HOME/.nvm/versions/node/v22.13.1/bin:$PATH\" FUNCTIONS_DISCOVERY_TIMEOUT=60 npm run serve:dev"],
       "port": 5001
     },
     {
